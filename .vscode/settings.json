@@ -5,6 +5,7 @@
         "colours",
         "paintutils",
         "colors",
-        "sleep"
+        "sleep",
+        "textutils"
     ]
 }
