@@ -11,41 +11,216 @@ Monitor = peripheral.wrap("top")
 Graphics_Mode = false
 Offset = 1
 Ore_Colors = {
-	clay = colors.brown,
-	glass = colors.lightBlue,
-	obsidian = colors.gray,
-	ender = colors.green,
-	emerald = colors.lime,
-	quartz = colors.lightGray,
-	diamond = colors.cyan,
-	debris = colors.brown,
-	iron = colors.orange,
-	gold = colors.yellow,
-	copper = colors.orange,
-	cobalt = colors.blue,
-	slime_steel = colors.lightBlue,
-	tinkers_bronze = colors.orange,
-	rose_gold = colors.pink,
-	pig_iron = colors.magenta,
-	manyullyn = colors.purple,
-	hepatizon = colors.purple,
-	queens_slime = colors.green,
-	netherite = colors.gray,
-	tin = colors.lightGray,
-	aluminum = colors.lightGray,
-	lead = colors.gray,
-	silver = colors.lightGray,
-	nickel = colors.yellow,
-	zinc = colors.lightGray,
-	osmium = colors.lightBlue,
-	uranium = colors.green,
-	bronze = colors.orange,
-	brass = colors.yellow,
-	electrum = colors.yellow,
-	invar = colors.lightGray,
-	constantan = colors.orange,
-	pewter = colors.yellow,
-	steel = colors.gray
+	clay = {
+		bar_color = colors.brown,
+		text_color = colors.white,
+		name = "Clay",
+		bar_name = "balls"
+	},
+	glass = {
+		bar_color = colors.lightBlue,
+		text_color = colors.black,
+		name = "Glass",
+		bar_name = "blocks"
+	},
+	obsidian = {
+		bar_color = colors.gray,
+		text_color = colors.white,
+		name = "blocks",
+		bar_name = ""
+	},
+	ender = {
+		bar_color = colors.green,
+		text_color = colors.white,
+		name = "Ender",
+		bar_name = "pearls"
+	},
+	emerald = {
+		bar_color = colors.lime,
+		text_color = colors.black,
+		name = "Emerald",
+		bar_name = "gems"
+	},
+	quartz = {
+		bar_color = colors.lightGray,
+		text_color = colors.black,
+		name = "Quartz",
+		bar_name = "shards"
+	},
+	diamond = {
+		bar_color = colors.cyan,
+		text_color = colors.white,
+		name = "Diamond",
+		bar_name = "gems"
+	},
+	debris = {
+		bar_color = colors.brown,
+		text_color = colors.white,
+		name = "Ancient Debris",
+		bar_name = "shards"
+	},
+	iron = {
+		bar_color = colors.red,
+		text_color = colors.black,
+		name = "Iron",
+		bar_name = "bars"
+	},
+	gold = {
+		bar_color = colors.yellow,
+		text_color = colors.black,
+		name = "Butter",
+		bar_name = "bars"
+	},
+	copper = {
+		bar_color = colors.orange,
+		text_color = colors.black,
+		name = "Copper",
+		bar_name = "bars"
+	},
+	cobalt = {
+		bar_color = colors.blue,
+		text_color = colors.white,
+		name = "Cobalt",
+		bar_name = "bars"
+	},
+	slime_steel = {
+		bar_color = colors.lightBlue,
+		text_color = colors.black,
+		name = "Slime Steel",
+		bar_name = "bars"
+	},
+	tinkers_bronze = {
+		bar_color = colors.orange,
+		text_color = colors.black,
+		name = "Tinker's Bronze",
+		bar_name = "bars"
+	},
+	rose_gold = {
+		bar_color = colors.pink,
+		text_color = colors.black,
+		name = "Rose Gold",
+		bar_name = "bars"
+	},
+	pig_iron = {
+		bar_color = colors.magenta,
+		text_color = colors.black,
+		name = "Pig Iron",
+		bar_name = "bars"
+	},
+	manyullyn = {
+		bar_color = colors.purple,
+		text_color = colors.white,
+		name = "Manyullyn",
+		bar_name = "bars"
+	},
+	hepatizon = {
+		bar_color = colors.purple,
+		text_color = colors.white,
+		name = "Hepatitis",
+		bar_name = "bars"
+	},
+	queens_slime = {
+		bar_color = colors.green,
+		text_color = colors.white,
+		name = "Queen's Slime",
+		bar_name = "bars"
+	},
+	netherite = {
+		bar_color = colors.gray,
+		text_color = colors.white,
+		name = "Netherite",
+		bar_name = "bars"
+	},
+	tin = {
+		bar_color = colors.lightGray,
+		text_color = colors.black,
+		name = "Tin",
+		bar_name = "bars"
+	},
+	aluminum = {
+		bar_color = colors.lightGray,
+		text_color = colors.black,
+		name = "Aluminum",
+		bar_name = "bars"
+	},
+	lead = {
+		bar_color = colors.gray,
+		text_color = colors.white,
+		name = "Lead",
+		bar_name = "bars"
+	},
+	silver = {
+		bar_color = colors.lightGray,
+		text_color = colors.black,
+		name = "Silver",
+		bar_name = "bars"
+	},
+	nickel = {
+		bar_color = colors.yellow,
+		text_color = colors.black,
+		name = "Nickel",
+		bar_name = "bars"
+	},
+	zinc = {
+		bar_color = colors.lightGray,
+		text_color = colors.black,
+		name = "Zinc",
+		bar_name = "bars"
+	},
+	osmium = {
+		bar_color = colors.lightBlue,
+		text_color = colors.black,
+		name = "Osmium",
+		bar_name = "bars"
+	},
+	uranium = {
+		bar_color = colors.green,
+		text_color = colors.white,
+		name = "Uranium",
+		bar_name = "bars"
+	},
+	bronze = {
+		bar_color = colors.orange,
+		text_color = colors.black,
+		name = "Bronze",
+		bar_name = "bars"
+	},
+	brass = {
+		bar_color = colors.yellow,
+		text_color = colors.black,
+		name = "Brass",
+		bar_name = "bars"
+	},
+	electrum = {
+		bar_color = colors.yellow,
+		text_color = colors.black,
+		name = "Electrum",
+		bar_name = "bars"
+	},
+	invar = {
+		bar_color = colors.lightGray,
+		text_color = colors.black,
+		name = "Invar",
+		bar_name = "bars"
+	},
+	constantan = {
+		bar_color = colors.orange,
+		text_color = colors.black,
+		name = "Constantan",
+		bar_name = "bars"
+	},
+	pewter = {
+		bar_color = colors.yellow,
+		text_color = colors.black,
+		name = "Pewter",
+		bar_name = "bars"
+	},
+	steel = {
+		bar_color = colors.gray,
+		text_color = colors.white,
+		name = "Steel",
+		bar_name = "bars"
+	}
 }
 
 local function draw_box_from_center(
@@ -100,28 +275,40 @@ local function draw_tank_graduations(
 	]]
 
 	-- 1/4
-	paintutils.drawLine(
-		width-1,
-		math.ceil(height-(0.25 * tank_height) - 1),
-		width-4,
-		math.ceil(height-(0.25 * tank_height) - 1),
-		colors.green)
+	paintutils.drawPixel(
+		width,
+		math.ceil(height - (0.25 * tank_height) - 1),
+		colors.green
+	)
+	paintutils.drawPixel(
+		math.floor(width / 2),
+		math.ceil(height - (0.25 * tank_height) - 1),
+		colors.green
+	)
 
 	--1/2
-	paintutils.drawLine(
-		width-1,
-		math.ceil(height-(0.5 * tank_height) - 1),
-		width-4,
-		math.ceil(height-(0.5 * tank_height) - 1),
-		colors.yellow)
+	paintutils.drawPixel(
+		width,
+		math.ceil(height - (0.5 * tank_height) - 1),
+		colors.orange
+	)
+	paintutils.drawPixel(
+		math.floor(width / 2),
+		math.ceil(height - (0.5 * tank_height) - 1),
+		colors.orange
+	)
 
 	--3/4
-	paintutils.drawLine(
-		width-1,
-		math.ceil(height-(0.75 * tank_height) - 1),
-		width-4,
-		math.ceil(height-(0.75 * tank_height) - 1),
-		colors.red)
+	paintutils.drawPixel(
+		width,
+		math.ceil(height - (0.75 * tank_height) - 1),
+		colors.red
+	)
+	paintutils.drawPixel(
+		math.floor(width / 2),
+		math.ceil(height - (0.75 * tank_height) - 1),
+		colors.red
+	)
 end
 
 local function draw_smeltry_tank(width, height)
@@ -238,6 +425,7 @@ local function fill_gui_tank(
 		]]
 
 		--TODO: Put ore text, centered, over spots in gui
+		local max_string_lenght = math.ceil(width / 2)
 
 		-- clear tank contents
 		draw_box_from_center(
@@ -258,9 +446,7 @@ local function fill_gui_tank(
 		local total_liquids = 0
 
 		--loop through every liquid in the smeltery
-		for _, value in (
-			ipairs(smeltery_contents)
-		) do
+		for _, value in ipairs(smeltery_contents) do
 
 			--[[
 			extract the ore name for use in
@@ -271,6 +457,13 @@ local function fill_gui_tank(
 			]]
 			local ore = string.sub(value.name, 19)
 			local metal_amount = value.amount
+			local percentage_taken_up =
+				metal_amount / max_fluids
+
+			if percentage_taken_up > 1 / tank_height then
+				percentage_taken_up = percentage_taken_up + ((1 / tank_height) / 2)
+				percentage_taken_up = percentage_taken_up - (percentage_taken_up % (1 / tank_height))
+			end
 
 			-- add to the total liquid count.
 			total_liquids =
@@ -282,34 +475,46 @@ local function fill_gui_tank(
 				width - 1,
 				next_y,
 				(width / 2) + 1,
-				(
-					next_y
-					- (
-						(metal_amount / max_fluids)
-						* tank_height
-					)
-				),
-				Ore_Colors[ore] or colors.lightGray
+				next_y - (percentage_taken_up * tank_height) + 1,
+				Ore_Colors[ore].bar_color or colors.lightGray
 			)
+
+			-- display the name of the ore overtop the bar
+			local detailed_string =
+				(Ore_Colors[ore].name or "Unknown")
+				.. ", " .. string.format("%.2f", metal_amount / 144)
+				.. " " .. (Ore_Colors[ore].bar_name or "units")
+
+			if string.len(detailed_string) < max_string_lenght then
+				term.setCursorPos(
+					math.ceil(width / 2)
+					+ ((math.ceil(width / 2)
+					- string.len(detailed_string)) / 2),
+					next_y
+				)
+				term.setTextColor(Ore_Colors[ore].text_color or colors.black)
+				print(detailed_string)
+			else
+				term.setCursorPos(
+					math.ceil(width / 2)
+					+ ((math.ceil(width / 2)
+					- string.len(Ore_Colors[ore].name or "Unknown")) / 2),
+					next_y
+				)
+				term.setTextColor(Ore_Colors[ore].text_color or colors.black)
+				print(Ore_Colors[ore].name or "Unknown")
+			end
+
 
 			-- incriment the next y value to be
 			--  above the previous one.
-				next_y =
-					next_y - (
-						(
-							(
-								metal_amount
-								/ max_fluids
-							)
-							* tank_height
-						) * 0.8
-					) - 1
+			if percentage_taken_up == 0 then
+				next_y = (next_y - (1 / tank_height) * tank_height)
+			else
+				next_y = (next_y - (percentage_taken_up * tank_height))
+			end
+			sleep(1)
 		end
-
-		-- redraw graduations
-		draw_tank_graduations(
-			width, height, tank_height
-		)
 
 		-- return the total amount (in mb) of
 		--  liquid we have in the smeltery.
@@ -341,6 +546,54 @@ local function read_smeltery()
 	local lava_tank = peripheral.wrap(
 		"tconstruct:tank_0"
 	)
+
+	-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	--[[
+	This is where the test data will be stored for
+		my own debugging when I'm not able to be in
+		Minecraft to test the program ingame.
+
+	The goal of this data will be that I can
+		quickly just comment or uncomment it and
+		it'll start reading live minecraft data.
+	]]
+	smeltery = {}
+	duct = {}
+	lava_tank = {}
+	smeltery.size = function()
+		return 18
+	end
+
+	duct.tanks = function()
+		return {
+			[1] = {
+				amount = 5000,
+				name = "tconstruct:molten_iron"
+			},
+			[2] = {
+				amount = 2500,
+				name = "tconstruct:molten_debris"
+			},
+			[3] = {
+				amount = 15 * 144,
+				name = "tconstruct:molten_ender"
+			},
+			[4] = {
+				amount = 25 * 144,
+				name = "tconstruct:molter_netherite"
+			}
+		}
+	end
+
+	lava_tank.tanks = function()
+		return {
+			{
+				amount = 4000,
+				name = "minecraft:lava"
+			}
+		}
+	end
+	-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	--[[
 	grab the maximum amount of items that can
@@ -407,13 +660,13 @@ local function print_smeltery_details(
 
 	-- calculate the maximum lenght of a stirng that will
 	-- 	fit nicely on the lefthand side.
-	local max_string_lenght = math.floor(width / 2)
+	local max_string_lenght = width / 2
 
 	-- print the current fill percentage with 3
 	-- 	significant digits.
 	print("Smeltery Details:\n")
 	print(
-		"Fill Ammount: " .. string.format(
+		"Fill Amount: " .. string.format(
 			"%.3f%%", current_fill_level * 100
 		) .. "\n"
 	)
@@ -422,8 +675,10 @@ local function print_smeltery_details(
 	-- 	ingot capacity.
 	local ingot_capacity_string =
 		"Ingot Capacity: "
+		.. string.format("%.2f", ingot_capacity - (current_fill_level * ingot_capacity))
+		.. " free of "
 		.. ingot_capacity
-		.. " Ingots"
+		.. " Total ingots."
 
 	-- check it's length and if it's too long, print it
 	-- 	on two lines.
@@ -432,11 +687,29 @@ local function print_smeltery_details(
 		< max_string_lenght
 	) then
 		print(ingot_capacity_string)
+	elseif (
+		string.len(
+			"\t"
+			.. string.format("%.2f", ingot_capacity - (current_fill_level * ingot_capacity))
+			.. " free of "
+			.. ingot_capacity
+			.. " Total ingots.\n"
+		) < max_string_lenght
+	) then
+		print(
+			"Ingot Capacity: \n\t"
+			.. string.format("%.2f", ingot_capacity - (current_fill_level * ingot_capacity))
+			.. " free of "
+			.. ingot_capacity
+			.. " Total ingots.\n"
+		)
 	else
 		print(
 			"Ingot Capacity: \n\t"
+			.. string.format("%.2f", ingot_capacity - (current_fill_level * ingot_capacity))
+			.. " free of "
 			.. ingot_capacity
-			.. " Ingots\n"
+			.. " max.\n"
 		)
 	end
 
@@ -500,7 +773,7 @@ local function main()
 	]]
 
 	-- set the scale of the text on the monitor.
-	Monitor.setTextScale(0.75)
+	Monitor.setTextScale(1)
 
 	-- draw the static gui
 	local tank_height = draw_static_gui(Monitor)
