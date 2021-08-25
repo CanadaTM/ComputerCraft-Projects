@@ -439,6 +439,7 @@ local function print_smeltery_details(
 		monitor.
 	]]
 
+	if INGAME then
 		-- clear details contents
 		draw_box_from_center(
 			math.floor(0.25 * width),
@@ -448,6 +449,7 @@ local function print_smeltery_details(
 			colors.black,
 			true
 		)
+	end
 
 	-- set the cursor just below the left side's title,
 	-- 	and make sure the background is black and the
