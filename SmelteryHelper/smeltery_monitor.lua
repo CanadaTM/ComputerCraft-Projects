@@ -319,13 +319,14 @@ local function read_smeltery()
 
 	-- wrap the key elements of the smeltery that
 	--  we need to read from.
-	local smeltery = peripheral.wrap(
+
+	local smeltery_periph = peripheral.wrap(
 		Peripherals.smeltery
 	)
-	local duct = peripheral.wrap(
+	local duct_periph = peripheral.wrap(
 		Peripherals.duct
 	)
-	local lava_tank = peripheral.wrap(
+	local lava_tank_periph = peripheral.wrap(
 		Peripherals.tanks[1]
 	)
 
@@ -340,15 +341,15 @@ local function read_smeltery()
 		it'll start reading live minecraft data.
 	]]
 	if not INGAME then
-		smeltery = {}
-		duct = {}
-		lava_tank = {}
+		smeltery_periph = {}
+		duct_periph = {}
+		lava_tank_periph = {}
 
-		smeltery.size = function()
+		smeltery_periph.size = function()
 			return 18
 		end
 
-		duct.tanks = function()
+		duct_periph.tanks = function()
 			return {
 				[1] = {
 					amount = 5000,
@@ -369,7 +370,7 @@ local function read_smeltery()
 			}
 		end
 
-		lava_tank.tanks = function()
+		lava_tank_periph.tanks = function()
 			return {
 				{
 					amount = 4000,
@@ -386,20 +387,20 @@ local function read_smeltery()
 		calculate the total molten ingot capacity,
 		and the total fluid capacity.
 	]]
-	local item_capacity = smeltery.size()
+	local item_capacity = smeltery_periph.size()
 	local ingot_capacity = item_capacity * 8
 	local fluid_capacity = ingot_capacity * 144
 
 	-- pull the current molten contents of the
 	--  smeltery
-	local contents = duct.tanks()
+	local contents = duct_periph.tanks()
 
 	--[[
 	get the content of the fuel tank(s), setup a
 		variable to hold the current fuel level,
 		and calculate the maximum fuel capacity.
 	]]
-	local fuel_contents = lava_tank.tanks()
+	local fuel_contents = lava_tank_periph.tanks()
 	local fuel_level = 0
 	local fuel_capacity = table.getn(
 		fuel_contents
@@ -440,9 +441,9 @@ local function print_smeltery_details(
 
 		-- clear details contents
 		draw_box_from_center(
-			0.25 * width,
+			math.floor(0.25 * width),
 			(height / 2) + 1,
-			(width / 2) - 1,
+			(width / 2) - 2,
 			height - 1,
 			colors.black,
 			true
@@ -799,8 +800,8 @@ local function initialize_globals()
 		}
 	}
 	Peripherals = {
-        tanks = {}
-    }
+		tanks = {}
+	}
 
 	if pcall(term.setGraphicsMode, true) then
 		term.setGraphicsMode(false)
@@ -809,7 +810,7 @@ local function initialize_globals()
 		INGAME = true
 	end
 
-    local pulled_periphs = {}
+	local pulled_periphs = {}
 	if INGAME then
 		pulled_periphs = peripheral.getNames()
 	else
@@ -822,7 +823,7 @@ local function initialize_globals()
 			"tconstruct:basin_1",
 			"tconstruct:table_3",
 			"tconstruct:duct_0",
-            "left"
+			"left"
 		}
 	end
 
@@ -836,27 +837,27 @@ local function initialize_globals()
 				or string.find(smeltery_periphs, "duct")
 			) then
 				local _, name_end = string.find(smeltery_periphs, "_")
-                if string.sub(smeltery_periphs, 0, name_end - 1) == "tank" then
-                    table.insert(Peripherals.tanks, value)
-                else
-                    Peripherals[string.sub(smeltery_periphs, 0, name_end - 1)] = value
-                end
+				if string.sub(smeltery_periphs, 0, name_end - 1) == "tank" then
+					table.insert(Peripherals.tanks, value)
+				else
+					Peripherals[string.sub(smeltery_periphs, 0, name_end - 1)] = value
+				end
 			end
 		elseif (
-            string.find(value, "monitor")
-            or string.find(value, "left")
-            and peripheral.getType("left") == "monitor"
-            or string.find(value, "right")
-            and peripheral.getType("right") == "monitor"
-            or string.find(value, "up")
-            and peripheral.getType("up") == "monitor"
-            or string.find(value, "down")
-            and peripheral.getType("down") == "monitor"
-            or string.find(value, "back")
-            and peripheral.getType("back") == "monitor"
-            or string.find(value, "front")
-            and peripheral.getType("front") == "monitor"
-        ) then
+			string.find(value, "monitor")
+			or string.find(value, "left")
+			and peripheral.getType("left") == "monitor"
+			or string.find(value, "right")
+			and peripheral.getType("right") == "monitor"
+			or string.find(value, "up")
+			and peripheral.getType("up") == "monitor"
+			or string.find(value, "down")
+			and peripheral.getType("down") == "monitor"
+			or string.find(value, "back")
+			and peripheral.getType("back") == "monitor"
+			or string.find(value, "front")
+			and peripheral.getType("front") == "monitor"
+		) then
 			table.insert(monitors, value)
 		end
 	end
@@ -876,7 +877,7 @@ local function initialize_globals()
 		end
 
 		local answer = read()
-	    if tonumber(answer) and tonumber(answer) <= monitor_count then
+		if tonumber(answer) and tonumber(answer) <= monitor_count then
 			Monitor = peripheral.wrap(monitors[tonumber(answer)])
 		else
 			error("Invalid Monitor Selection")
