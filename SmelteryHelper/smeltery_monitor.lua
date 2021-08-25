@@ -7,7 +7,7 @@ This programe will be used to read a Tinkers'
 	VSCode max col = 52
 ]]
 
-Monitor = peripheral.wrap("top")
+Monitor = peripheral.wrap("monitor_2")
 Graphics_Mode = false
 Offset = 1
 Ore_Colors = {
@@ -513,7 +513,6 @@ local function fill_gui_tank(
 			else
 				next_y = (next_y - (percentage_taken_up * tank_height))
 			end
-			sleep(1)
 		end
 
 		-- return the total amount (in mb) of
@@ -544,7 +543,7 @@ local function read_smeltery()
 		"tconstruct:duct_0"
 	)
 	local lava_tank = peripheral.wrap(
-		"tconstruct:tank_0"
+		"tconstruct:tank_1"
 	)
 
 	-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -557,42 +556,42 @@ local function read_smeltery()
 		quickly just comment or uncomment it and
 		it'll start reading live minecraft data.
 	]]
-	smeltery = {}
-	duct = {}
-	lava_tank = {}
-	smeltery.size = function()
-		return 18
-	end
+	-- smeltery = {}
+	-- duct = {}
+	-- lava_tank = {}
+	-- smeltery.size = function()
+	-- 	return 18
+	-- end
 
-	duct.tanks = function()
-		return {
-			[1] = {
-				amount = 5000,
-				name = "tconstruct:molten_iron"
-			},
-			[2] = {
-				amount = 2500,
-				name = "tconstruct:molten_debris"
-			},
-			[3] = {
-				amount = 15 * 144,
-				name = "tconstruct:molten_ender"
-			},
-			[4] = {
-				amount = 25 * 144,
-				name = "tconstruct:molter_netherite"
-			}
-		}
-	end
+	-- duct.tanks = function()
+	-- 	return {
+	-- 		[1] = {
+	-- 			amount = 5000,
+	-- 			name = "tconstruct:molten_iron"
+	-- 		},
+	-- 		[2] = {
+	-- 			amount = 2500,
+	-- 			name = "tconstruct:molten_debris"
+	-- 		},
+	-- 		[3] = {
+	-- 			amount = 15 * 144,
+	-- 			name = "tconstruct:molten_ender"
+	-- 		},
+	-- 		[4] = {
+	-- 			amount = 25 * 144,
+	-- 			name = "tconstruct:molter_netherite"
+	-- 		}
+	-- 	}
+	-- end
 
-	lava_tank.tanks = function()
-		return {
-			{
-				amount = 4000,
-				name = "minecraft:lava"
-			}
-		}
-	end
+	-- lava_tank.tanks = function()
+	-- 	return {
+	-- 		{
+	-- 			amount = 4000,
+	-- 			name = "minecraft:lava"
+	-- 		}
+	-- 	}
+	-- end
 	-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	--[[
@@ -773,7 +772,7 @@ local function main()
 	]]
 
 	-- set the scale of the text on the monitor.
-	Monitor.setTextScale(1)
+	Monitor.setTextScale(0.75)
 
 	-- draw the static gui
 	local tank_height = draw_static_gui(Monitor)
@@ -787,27 +786,30 @@ local function main()
 		Graphics_Mode
 	)
 
-	-- read the smeltery
-	local read_data = read_smeltery()
+	-- Mainloop
+	while true do
+		-- read the smeltery
+		local read_data = read_smeltery()
 
-	-- render the current contents of the smeltery
-	local current_fill_level = fill_gui_tank(
-		read_data["smeltery_contents"],
-		read_data["max_fluids"],
-		width,
-		height,
-		tank_height
-	)
+		-- render the current contents of the smeltery
+		local current_fill_level = fill_gui_tank(
+			read_data["smeltery_contents"],
+			read_data["max_fluids"],
+			width,
+			height,
+			tank_height
+		)
 
-	-- print the current details of the smeltery.
-	print_smeltery_details(
-		width,
-		current_fill_level,
-		read_data["max_ingots"],
-		read_data["max_fluids"],
-		read_data["fuel_fill_level"],
-		read_data["max_fuel"]
-	)
+		-- print the current details of the smeltery.
+		print_smeltery_details(
+			width,
+			current_fill_level,
+			read_data["max_ingots"],
+			read_data["max_fluids"],
+			read_data["fuel_fill_level"],
+			read_data["max_fuel"]
+		)
+	end
 
 	term.redirect(oldterm)
 	--! Now the term.* calls will draw on the
