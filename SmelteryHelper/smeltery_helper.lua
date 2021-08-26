@@ -1,5 +1,5 @@
 --[[
-This programe will be used to read a Tinkers'
+This program will be used to read a Tinkers'
 	Construct smeltery, and be able to perform some
 	automated tasks relating to the smeltery.
 
@@ -237,16 +237,16 @@ local function initialize_globals()
 	else
 		pulled_periphs = {
 			"back",
-			"monitor_5",
 			"tconstruct:smeltery_4",
 			"tconstruct:tank_1",
-			"monitor_3",
 			"tconstruct:basin_1",
 			"tconstruct:table_3",
 			"tconstruct:duct_0",
 			"left",
 			"right",
 			"top",
+			"bottom",
+			"front"
 		}
 	end
 
@@ -306,6 +306,8 @@ local function initialize_globals()
 		else
 			error("Invalid Monitor Selection")
 		end
+	else
+		Monitor = peripheral.wrap(monitors[1])
 	end
 end
 
@@ -330,24 +332,29 @@ local function draw_box_from_center(
 	filled = filled or false
 	fancy = fancy or false
 
+	local top_left_x = math.floor(center_x - (width / 2))
+	local top_left_y = math.floor(center_y - (height / 2))
+	local bottom_right_x = math.floor(center_x + (width / 2))
+	local bottom_right_y = math.floor(center_y + (height / 2))
+
 	--[[
 	Check if we want the box filled. For either, we
 		calculate the top left and bottom right points.
 	]]
 	if filled then
 		paintutils.drawFilledBox(
-			math.floor(center_x - (width / 2)),
-			math.floor(center_y - (height / 2)),
-			math.floor(center_x + (width / 2)),
-			math.floor(center_y + (height / 2)),
+			top_left_x,
+			top_left_y,
+			bottom_right_x,
+			bottom_right_y,
 			color
 		)
 	else
 		paintutils.drawBox(
-			math.floor(center_x - (width / 2)),
-			math.floor(center_y - (height / 2)),
-			math.floor(center_x + (width / 2)),
-			math.floor(center_y + (height / 2)),
+			top_left_x,
+			top_left_y,
+			bottom_right_x,
+			bottom_right_y,
 			color
 		)
 	end
@@ -355,52 +362,52 @@ local function draw_box_from_center(
 	if fancy then
 		-- corner highlight
 		paintutils.drawPixel(
-			math.floor(center_x - (width / 2)),
-			math.floor(center_y - (height / 2)),
+			top_left_x,
+			top_left_y,
 			colors.white
 		)
 
 		-- corner shadow
 		paintutils.drawPixel(
-			math.floor(center_x + (width / 2)),
-			math.floor(center_y + (height / 2)),
+			bottom_right_x,
+			bottom_right_y,
 			colors.black
 		)
 
-		-- left verticle line
+		-- left vertical line
 		paintutils.drawLine(
-			math.floor(center_x - (width / 2)),
-			math.floor(center_y - (height / 2)) + 1,
-			math.floor(center_x - (width / 2)),
-			math.floor(center_y + (height / 2)),
+			top_left_x,
+			top_left_y + 1,
+			top_left_x,
+			bottom_right_y,
 			colors.lightGray
 		)
 
-		-- right verticle line
+		-- right vertical line
 		paintutils.drawLine(
-			math.floor(center_x + (width / 2)),
-			math.floor(center_y + (height / 2)),
-			math.floor(center_x + (width / 2)),
-			math.floor(center_y - (height / 2)) - 1,
-			colors.lightGray
+			bottom_right_x,
+			top_left_y + 1,
+			bottom_right_x,
+			bottom_right_y - 1,
+			colors.gray
 		)
 
 		-- top horizontal line
 		paintutils.drawLine(
-			math.floor(center_x - (width / 2)),
-			math.floor(center_y - (height / 2)),
-			math.floor(center_x - (width / 2)),
-			math.floor(center_x - (width / 2)),
+			top_left_x + 1,
+			top_left_y,
+			bottom_right_x,
+			top_left_y,
 			colors.lightGray
 		)
 
 		-- bottom horizontal line
 		paintutils.drawLine(
-			math.floor(center_x - (width / 2)),
-			math.floor(center_y - (height / 2)) + 1,
-			math.floor(center_x - (width / 2)),
-			math.floor(center_x - (width / 2)),
-			colors.lightGray
+			top_left_x + 1,
+			bottom_right_y,
+			bottom_right_x - 1,
+			bottom_right_y,
+			colors.gray
 		)
 	end
 end
@@ -428,14 +435,81 @@ local function draw_static_gui(width, height)
 		2/3 * height,
 		string.len(label_ez_empty) + 1,
 		2,
-		colors.green,
+		colors.lightGray,
+		true,
 		true
 	)
 
-	term.setBackgroundColor(colors.green)
+	term.setBackgroundColor(colors.lightGray)
 	term.setTextColor(colors.black)
 	term.setCursorPos((0.25 * width) - (string.len(label_ez_empty) / 2), 2/3 * height)
 	print(label_ez_empty)
+end
+
+local function get_smeltery_contents()
+	if INGAME then
+		return peripheral.wrap(Peripherals.duct).tanks()
+	else
+		return {
+			[3] = {
+				amount = 5000,
+				name = "tconstruct:molten_iron"
+			},
+			[4] = {
+				amount = 2500,
+				name = "tconstruct:molten_debris"
+			},
+			[2] = {
+				amount = 15 * 144,
+				name = "tconstruct:molten_ender"
+			},
+			[1] = {
+				amount = 25 * 144,
+				name = "tconstruct:molten_netherite"
+			}
+		}
+	end
+end
+
+local function easy_empty()
+	local smeltery_contents = get_smeltery_contents()
+
+	local drainable = {}
+
+	for _, value in ipairs(smeltery_contents) do
+		if value.amount / 144 > 1 then table.insert(drainable, value) end
+	end
+
+	if #drainable > 0 then
+		print("\nI found " .. #drainable .. " fluids I can drain, draining now...")
+
+		for _, value in ipairs(drainable) do
+
+			local drainable_ingots = math.floor(value.amount / 144)
+			local drainable_blocks
+			if drainable_ingots > 9 then
+				drainable_blocks = math.floor(drainable_ingots / 9)
+				drainable_ingots = drainable_ingots % 9
+			end
+
+			print(
+				"Draining "
+				.. drainable_blocks
+				.. " blocks and "
+				.. drainable_ingots
+				.. " ingots of "
+				.. Ore_Colors[string.sub(value.name, 19)].name
+			)
+
+			if INGAME then
+				--do stuff
+			else
+				
+			end
+		end
+	else
+		print("There are no easily drainable liquids in the smeltery")
+	end
 end
 
 local function main()
@@ -454,6 +528,47 @@ local function main()
 	)
 
 	draw_static_gui(width, height)
+
+	-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	-- Button Corners:
+
+	-- EZ Empty:
+	-- 	top left: 7, 11
+	-- 	top right: 16, 11
+	-- 	bottom left: 7, 13
+	--  bottom right: 16 13
+	-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+	term.setBackgroundColor(colors.black)
+	term.setTextColor(colors.white)
+	while true do
+		term.setCursorPos(1, 3)
+		local xPos, yPos
+		if INGAME then
+			_, _, xPos, yPos = os.pullEvent("monitor_touch")
+		else
+			_, _, xPos, yPos = os.pullEvent("mouse_click")
+		end
+
+		-- if we clicked the EZ Empty button.
+		if xPos >= 7 and xPos <= 16 and yPos >= 11 and yPos <= 13 then
+			term.setBackgroundColor(colours.black)
+			term.setTextColor(colors.white)
+
+			local confirmation = "Beginning intelligently emptying the smeltery..."
+			term.setCursorPos(
+				(math.ceil(
+					width - string.len(confirmation)
+				) / 2) + 1,
+				3
+			)
+			print(confirmation)
+
+			easy_empty()
+		end
+	end
+
 
 	term.redirect(oldterm)
 	--! Now the term.* calls will draw on the

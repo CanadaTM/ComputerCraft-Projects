@@ -95,7 +95,7 @@ local function draw_tank_graduations(
 	)
 end
 
-local function draw_smeltry_tank(width, height)
+local function draw_smeltery_tank(width, height)
 	--[[
 	This function handles drawing the gui
 		representation of the smeltery tank.
@@ -153,7 +153,7 @@ local function draw_static_gui(monitor)
 	term.setCursorPos(1,1)
 
 	-- draw the smeltry tank
-	local tank_height = draw_smeltry_tank(
+	local tank_height = draw_smeltery_tank(
 		width, height
 	)
 
