@@ -1,5 +1,5 @@
 --[[
-This programe will be used to read a Tinkers'
+This program will be used to read a Tinkers'
 	Construct smeltery, display some data about it,
 	and be able to perform some automated tasks
 	relating to the smeltery.
@@ -54,7 +54,7 @@ local function draw_tank_graduations(
 )
 	--[[
 	This function handles drawing the graduations
-		on the gui representation of the smeltry
+		on the gui representation of the smeltery
 		tank.
 	]]
 
@@ -152,7 +152,7 @@ local function draw_static_gui(monitor)
 	term.clear()
 	term.setCursorPos(1,1)
 
-	-- draw the smeltry tank
+	-- draw the smeltery tank
 	local tank_height = draw_smeltery_tank(
 		width, height
 	)
@@ -208,7 +208,7 @@ local function fill_gui_tank(
 			the GUI accurate.
 		]]
 
-		local max_string_lenght = math.ceil(width / 2)
+		local max_string_length = math.ceil(width / 2)
 
 		-- clear tank contents
 		draw_box_from_center(
@@ -272,7 +272,7 @@ local function fill_gui_tank(
 				.. ", " .. string.format("%.2f", metal_amount / 144)
 				.. " " .. (Ore_Colors[ore].bar_name or "units")
 
-			if string.len(detailed_string) < max_string_lenght then
+			if string.len(detailed_string) < max_string_length then
 				term.setCursorPos(
 					math.ceil(width / 2)
 					+ ((math.ceil(width / 2)
@@ -293,7 +293,7 @@ local function fill_gui_tank(
 			end
 
 
-			-- incriment the next y value to be
+			-- increment the next y value to be
 			--  above the previous one.
 			if percentage_taken_up == 0 then
 				next_y = (next_y - (1 / tank_height) * tank_height)
