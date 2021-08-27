@@ -327,6 +327,7 @@ local function initialize_globals()
 			"tconstruct:basin_1",
 			"tconstruct:table_3",
 			"tconstruct:duct_0",
+			"tconstruct:drain_1",
 			"left",
 			"right",
 			"top",
@@ -568,21 +569,25 @@ local function get_smeltery_contents()
 		return peripheral.wrap(Peripherals.duct).tanks()
 	else
 		return {
-			[3] = {
+			[1] = {
 				amount = 5000,
 				name = "tconstruct:molten_iron"
 			},
-			[4] = {
+			[2] = {
 				amount = 2500,
 				name = "tconstruct:molten_debris"
 			},
-			[2] = {
+			[3] = {
 				amount = 15 * 144,
 				name = "tconstruct:molten_ender"
 			},
-			[1] = {
+			[4] = {
 				amount = 25 * 144,
 				name = "tconstruct:molten_netherite"
+			},
+			[5] = {
+				amount = 20 * 144,
+				name = "fakemod:molten_unobtanium"
 			}
 		}
 	end
@@ -610,13 +615,25 @@ local function easy_empty()
 			end
 
 			local _, name_start = string.find(value.name, "molten_")
+			local ore
+			if pcall(function() if Ore_Colors[string.sub(value.name, name_start + 1)] then return true else error() end end) then
+				ore = Ore_Colors[string.sub(value.name, name_start + 1)]
+			else
+				ore = {
+					bar_color = colors.lightGray,
+					text_color = colors.black,
+					name = "Unknown",
+					bar_name = "bars"
+				}
+			end
+
 			print(
 				"Draining "
 				.. drainable_blocks
 				.. " blocks and "
 				.. drainable_ingots
-				.. " ingots of "
-				.. Ore_Colors[string.sub(value.name, name_start + 1)].name
+				.. " ".. ore.bar_name .." of "
+				.. ore.name
 			)
 
 			if INGAME then
@@ -678,7 +695,26 @@ local function easy_empty()
 					end
 				end
 			else
-				-- pass
+				for i = 1, drainable_blocks do
+					for j = 1, #smeltery_contents do
+						if value.name == smeltery_contents[j].name then
+							smeltery_contents[j].amount = smeltery_contents[j].amount - (9 * 144)
+							break
+						end
+						sleep(2)
+					end
+				end
+
+				-- FIXME: this will not see if the cast in the table will actually cast an ingot or gem or whatever else
+				for i = 1, drainable_ingots do
+					for j = 1, #smeltery_contents do
+						if value.name == smeltery_contents[j].name then
+							smeltery_contents[j].amount = smeltery_contents[j].amount - 144
+							break
+						end
+						sleep(2)
+					end
+				end
 			end
 		end
 	else

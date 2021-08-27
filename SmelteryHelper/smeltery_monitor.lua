@@ -237,9 +237,6 @@ local function fill_gui_tank(
 				bar in, as well as getting the
 				amount of the current metal there
 				is.
-
-				tconstruct:molten_copper
-
 			]]
 			local _, name_start = string.find(value.name, "molten_")
 			local ore = string.sub(value.name, name_start + 1)
@@ -256,6 +253,17 @@ local function fill_gui_tank(
 			total_liquids =
 				total_liquids + value.amount
 
+			if pcall(function() if Ore_Colors[ore] then return true else error() end end) then
+				ore = Ore_Colors[ore]
+			else
+				ore = {
+					bar_color = colors.lightGray,
+					text_color = colors.black,
+					name = "Unknown",
+					bar_name = "bars"
+				}
+			end
+
 			-- draw an appropriately sized box with
 			--  respect to the size of the tank.
 			paintutils.drawFilledBox(
@@ -263,14 +271,14 @@ local function fill_gui_tank(
 				next_y,
 				(width / 2) + 1,
 				next_y - (percentage_taken_up * tank_height) + 1,
-				Ore_Colors[ore].bar_color or colors.lightGray
+				ore.bar_color
 			)
 
 			-- display the name of the ore overtop the bar
 			local detailed_string =
-				(Ore_Colors[ore].name or "Unknown")
+				ore.name
 				.. ", " .. string.format("%.2f", metal_amount / 144)
-				.. " " .. (Ore_Colors[ore].bar_name or "units")
+				.. " " .. ore.bar_name
 
 			if string.len(detailed_string) < max_string_length then
 				term.setCursorPos(
@@ -279,17 +287,17 @@ local function fill_gui_tank(
 					- string.len(detailed_string)) / 2),
 					next_y
 				)
-				term.setTextColor(Ore_Colors[ore].text_color or colors.black)
+				term.setTextColor(ore.text_color)
 				print(detailed_string)
 			else
 				term.setCursorPos(
 					math.ceil(width / 2)
 					+ ((math.ceil(width / 2)
-					- string.len(Ore_Colors[ore].name or "Unknown")) / 2),
+					- string.len(ore.name)) / 2),
 					next_y
 				)
-				term.setTextColor(Ore_Colors[ore].text_color or colors.black)
-				print(Ore_Colors[ore].name or "Unknown")
+				term.setTextColor(ore.text_color)
+				print(ore.name)
 			end
 
 
@@ -369,7 +377,11 @@ local function read_smeltery()
 				},
 				[4] = {
 					amount = 25 * 144,
-					name = "tconstruct:molter_netherite"
+					name = "tconstruct:molten_netherite"
+				},
+				[5] = {
+					amount = 20 * 144,
+					name = "fakemod:molten_unobtanium"
 				}
 			}
 		end
@@ -905,14 +917,17 @@ local function initialize_globals()
 	else
 		pulled_periphs = {
 			"back",
-			"monitor_5",
 			"tconstruct:smeltery_4",
 			"tconstruct:tank_1",
-			"monitor_3",
 			"tconstruct:basin_1",
 			"tconstruct:table_3",
 			"tconstruct:duct_0",
-			"left"
+			"tconstruct:drain_1",
+			"left",
+			"right",
+			"top",
+			"bottom",
+			"front"
 		}
 	end
 
@@ -1024,6 +1039,10 @@ local function main()
 			read_data["fuel_fill_level"],
 			read_data["max_fuel"]
 		)
+
+		if not INGAME then
+			sleep(5)
+		end
 	end
 
 	term.redirect(oldterm)
