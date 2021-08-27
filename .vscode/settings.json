@@ -1,0 +1,10 @@
+{
+    "Lua.diagnostics.globals": [
+        "colors",
+        "term",
+        "peripheral",
+        "read",
+        "paintutils",
+        "colours"
+    ]
+}

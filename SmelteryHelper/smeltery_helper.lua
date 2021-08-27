@@ -218,10 +218,95 @@ local function initialize_globals()
 			text_color = colors.white,
 			name = "Steel",
 			bar_name = "bars"
+		},
+		fairy = {
+			bar_color = colors.orange,
+			text_color = colors.black,
+			name = "Fairy",
+			bar_name = "bars"
+		},
+		shadow_steel = {
+			bar_color = colors.gray,
+			text_color = colors.white,
+			name = "Shadow Steel",
+			bar_name = "bars"
+		},
+		arcane_gold = {
+			bar_color = colors.orange,
+			text_color = colors.white,
+			name = "Arcane Gold",
+			bar_name = "bars"
+		},
+		neptunium = {
+			bar_color = colors.cyan,
+			text_color = colors.white,
+			name = "Neptunium",
+			bar_name = "bars"
+		},
+		starmetal = {
+			bar_color = colors.blue,
+			text_color = colors.white,
+			name = "Starmetal",
+			bar_name = "bars"
+		},
+		pink_slime = {
+			bar_color = colors.pink,
+			text_color = colors.black,
+			name = "Pink Slime Alloy",
+			bar_name = "bars"
+		},
+		cloggrum = {
+			bar_color = colors.brown,
+			text_color = colors.white,
+			name = "Cloggrum",
+			bar_name = "bars"
+		},
+		froststeel = {
+			bar_color = colors.blue,
+			text_color = colors.white,
+			name = "Froststeel",
+			bar_name = "bars"
+		},
+		utherium = {
+			bar_color = colors.orange,
+			text_color = colors.white,
+			name = "Utherium",
+			bar_name = "bars"
+		},
+		forgotten_metal = {
+			bar_color = colors.lightGray,
+			text_color = colors.black,
+			name = "Forgotten Metal",
+			bar_name = "bars"
+		},
+		regalium = {
+			bar_color = colors.yellow,
+			text_color = colors.black,
+			name = "Regalium",
+			bar_name = "bars"
+		},
+		refined_obsidian = {
+			bar_color = colors.purple,
+			text_color = colors.white,
+			name = "Refined Obsidian",
+			bar_name = "bars"
+		},
+		refined_glowstone = {
+			bar_color = colors.yellow,
+			text_color = colors.black,
+			name = "Refined Glowstone",
+			bar_name = "bars"
+		},
+		iesnium = {
+			bar_color = colors.lightBlue,
+			text_color = colors.white,
+			name = "Iesnium",
+			bar_name = "bars"
 		}
 	}
 	Peripherals = {
-		tanks = {}
+		tanks = {},
+		storages = {}
 	}
 
 	if pcall(term.setGraphicsMode, true) then
@@ -258,6 +343,7 @@ local function initialize_globals()
 				string.find(smeltery_periphs, "smeltery")
 				or string.find(smeltery_periphs, "basin")
 				or string.find(smeltery_periphs, "table")
+				or string.find(smeltery_periphs, "drain")
 				or string.find(smeltery_periphs, "duct")
 			) then
 				local _, name_end = string.find(smeltery_periphs, "_")
@@ -267,6 +353,11 @@ local function initialize_globals()
 					Peripherals[string.sub(smeltery_periphs, 0, name_end - 1)] = value
 				end
 			end
+		elseif (
+			string.find(value, "chest")
+			or string.find(value, "barrel")
+		) then
+			table.insert(Peripherals["storages"], value)
 		elseif (
 			string.find(value, "monitor")
 			or string.find(value, "left")
@@ -309,6 +400,7 @@ local function initialize_globals()
 	else
 		Monitor = peripheral.wrap(monitors[1])
 	end
+	term.clear()
 end
 
 local function draw_box_from_center(
@@ -410,9 +502,21 @@ local function draw_box_from_center(
 			colors.gray
 		)
 	end
+
+	return {
+		top_left = {
+			x = top_left_x,
+			y = top_left_y
+		},
+		bottom_right = {
+			x = bottom_right_x,
+			y = bottom_right_y
+		}
+	}
 end
 
 local function draw_static_gui(width, height)
+	local button_locations = {}
 
 	term.setBackgroundColor(colours.black)
 	term.setTextColor(colors.white)
@@ -430,7 +534,7 @@ local function draw_static_gui(width, height)
 	print(title)
 
 	local label_ez_empty = "EZ Empty"
-	draw_box_from_center(
+	local locations = draw_box_from_center(
 		math.floor(0.25 * width),
 		2/3 * height,
 		string.len(label_ez_empty) + 1,
@@ -439,11 +543,24 @@ local function draw_static_gui(width, height)
 		true,
 		true
 	)
+	button_locations[label_ez_empty] = {
+		top_left = {
+			x = locations.top_left.x,
+			y = locations.top_left.y
+		},
+		bottom_right = {
+			x = locations.bottom_right.x,
+			y = locations.bottom_right.y
+		}
+	}
 
 	term.setBackgroundColor(colors.lightGray)
 	term.setTextColor(colors.black)
 	term.setCursorPos((0.25 * width) - (string.len(label_ez_empty) / 2), 2/3 * height)
 	print(label_ez_empty)
+
+
+	return button_locations
 end
 
 local function get_smeltery_contents()
@@ -486,30 +603,93 @@ local function easy_empty()
 		for _, value in ipairs(drainable) do
 
 			local drainable_ingots = math.floor(value.amount / 144)
-			local drainable_blocks
-			if drainable_ingots > 9 then
+			local drainable_blocks = 0
+			if drainable_ingots >= 9 then
 				drainable_blocks = math.floor(drainable_ingots / 9)
 				drainable_ingots = drainable_ingots % 9
 			end
 
+			local _, name_start = string.find(value.name, "molten_")
 			print(
 				"Draining "
 				.. drainable_blocks
 				.. " blocks and "
 				.. drainable_ingots
 				.. " ingots of "
-				.. Ore_Colors[string.sub(value.name, 19)].name
+				.. Ore_Colors[string.sub(value.name, name_start + 1)].name
 			)
 
 			if INGAME then
-				--do stuff
+				local storage
+				local drain = peripheral.wrap(
+					Peripherals.drain
+				)
+				local casting_basin = peripheral.wrap(
+					Peripherals.basin
+				)
+				local casting_table = peripheral.wrap(
+					Peripherals.table
+				)
+				if #Peripherals.storages > 0 then
+					storage = Peripherals.storages[1]
+					print(
+						"I am using "
+						.. storage
+						.. " for output items."
+					)
+				else
+					error("No inventory found!")
+				end
+
+				for i = 1, drainable_blocks do
+					drain.pushFluid(
+						Peripherals.basin,
+						9 * 144,
+						value.name
+					)
+
+					while casting_basin.pushItems(
+						storage, 2
+					) == 0 do
+						-- local pulled = casting_basin.list()
+						-- print(textutils.serialise(pulled))
+						-- if #pulled > 0 then
+						-- 	local item_location, _ = next(pulled)
+						-- 	casting_basin.pushItems(
+						-- 		storage, item_location
+						-- 	)
+						-- 	print("Item pulled from inventory, casting next item...")
+						-- 	break
+						-- end
+					end
+				end
+
+				-- FIXME: this will not see if the cast in the table will actually cast an ingot or gem or whatever else
+				for i = 1, drainable_ingots do
+					drain.pushFluid(
+						Peripherals.table,
+						9 * 144,
+						value.name
+					)
+
+					while casting_table.pushItems(
+						storage, 2
+					) == 0 do
+					end
+				end
 			else
-				
+				-- pass
 			end
 		end
 	else
 		print("There are no easily drainable liquids in the smeltery")
+		sleep(2)
+		term.clear()
+		return
 	end
+	print("Done draining!")
+	sleep(2)
+	term.clear()
 end
 
 local function main()
@@ -527,21 +707,13 @@ local function main()
 		Graphics_Mode
 	)
 
-	draw_static_gui(width, height)
-
-	-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	-- Button Corners:
-
-	-- EZ Empty:
-	-- 	top left: 7, 11
-	-- 	top right: 16, 11
-	-- 	bottom left: 7, 13
-	--  bottom right: 16 13
-	-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+	local button_locations = draw_static_gui(width, height)
 
 	term.setBackgroundColor(colors.black)
 	term.setTextColor(colors.white)
+
+	-- TODO: possible feature to take in a chest of items and intelligently melt them down so as to not create alloys
+
 	while true do
 		term.setCursorPos(1, 3)
 		local xPos, yPos
@@ -552,7 +724,12 @@ local function main()
 		end
 
 		-- if we clicked the EZ Empty button.
-		if xPos >= 7 and xPos <= 16 and yPos >= 11 and yPos <= 13 then
+		if (
+			xPos >= button_locations["EZ Empty"].top_left.x
+			and xPos <= button_locations["EZ Empty"].bottom_right.x
+			and yPos >= button_locations["EZ Empty"].top_left.y
+			and yPos <= button_locations["EZ Empty"].bottom_right.y
+		) then
 			term.setBackgroundColor(colours.black)
 			term.setTextColor(colors.white)
 
@@ -566,6 +743,7 @@ local function main()
 			print(confirmation)
 
 			easy_empty()
+			draw_static_gui(width, height)
 		end
 	end
 

@@ -237,8 +237,12 @@ local function fill_gui_tank(
 				bar in, as well as getting the
 				amount of the current metal there
 				is.
+
+				tconstruct:molten_copper
+
 			]]
-			local ore = string.sub(value.name, 19)
+			local _, name_start = string.find(value.name, "molten_")
+			local ore = string.sub(value.name, name_start + 1)
 			local metal_amount = value.amount
 			local percentage_taken_up =
 				metal_amount / max_fluids
@@ -426,7 +430,6 @@ end
 local function print_smeltery_details(
 	width,
 	height,
-	tank_height,
 	current_fill_level,
 	ingot_capacity,
 	fluid_capacity,
@@ -458,9 +461,9 @@ local function print_smeltery_details(
 	term.setBackgroundColor(colors.black)
 	term.setTextColor(colors.white)
 
-	-- calculate the maximum lenght of a stirng that will
+	-- calculate the maximum length of a string that will
 	-- 	fit nicely on the lefthand side.
-	local max_string_lenght = width / 2
+	local max_string_length = width / 2
 
 	-- print the current fill percentage with 3
 	-- 	significant digits.
@@ -489,7 +492,7 @@ local function print_smeltery_details(
 	-- 	on two lines.
 	if (
 		string.len(ingot_capacity_string)
-		< max_string_lenght
+		< max_string_length
 	) then
 		print(ingot_capacity_string)
 	elseif (
@@ -504,7 +507,7 @@ local function print_smeltery_details(
 			.. " free of "
 			.. ingot_capacity
 			.. " Total ingots.\n"
-		) < max_string_lenght
+		) < max_string_length
 	) then
 		print(
 			"Ingot Capacity: \n\t"
@@ -544,7 +547,7 @@ local function print_smeltery_details(
 	-- 	on two lines.
 	if (
 		string.len(fluid_capacity_string)
-		< max_string_lenght
+		< max_string_length
 	) then
 		print(fluid_capacity_string)
 	else
@@ -570,7 +573,7 @@ local function print_smeltery_details(
 	-- 	on two lines.
 	if (
 		string.len(fuel_level_string)
-		< max_string_lenght
+		< max_string_length
 	) then
 		print(fuel_level_string)
 	else
@@ -799,6 +802,90 @@ local function initialize_globals()
 			text_color = colors.white,
 			name = "Steel",
 			bar_name = "bars"
+		},
+		fairy = {
+			bar_color = colors.orange,
+			text_color = colors.black,
+			name = "Fairy",
+			bar_name = "bars"
+		},
+		shadow_steel = {
+			bar_color = colors.gray,
+			text_color = colors.white,
+			name = "Shadow Steel",
+			bar_name = "bars"
+		},
+		arcane_gold = {
+			bar_color = colors.orange,
+			text_color = colors.white,
+			name = "Arcane Gold",
+			bar_name = "bars"
+		},
+		neptunium = {
+			bar_color = colors.cyan,
+			text_color = colors.white,
+			name = "Neptunium",
+			bar_name = "bars"
+		},
+		starmetal = {
+			bar_color = colors.blue,
+			text_color = colors.white,
+			name = "Starmetal",
+			bar_name = "bars"
+		},
+		pink_slime = {
+			bar_color = colors.pink,
+			text_color = colors.black,
+			name = "Pink Slime Alloy",
+			bar_name = "bars"
+		},
+		cloggrum = {
+			bar_color = colors.brown,
+			text_color = colors.white,
+			name = "Cloggrum",
+			bar_name = "bars"
+		},
+		froststeel = {
+			bar_color = colors.blue,
+			text_color = colors.white,
+			name = "Froststeel",
+			bar_name = "bars"
+		},
+		utherium = {
+			bar_color = colors.orange,
+			text_color = colors.white,
+			name = "Utherium",
+			bar_name = "bars"
+		},
+		forgotten_metal = {
+			bar_color = colors.lightGray,
+			text_color = colors.black,
+			name = "Forgotten Metal",
+			bar_name = "bars"
+		},
+		regalium = {
+			bar_color = colors.yellow,
+			text_color = colors.black,
+			name = "Regalium",
+			bar_name = "bars"
+		},
+		refined_obsidian = {
+			bar_color = colors.purple,
+			text_color = colors.white,
+			name = "Refined Obsidian",
+			bar_name = "bars"
+		},
+		refined_glowstone = {
+			bar_color = colors.yellow,
+			text_color = colors.black,
+			name = "Refined Glowstone",
+			bar_name = "bars"
+		},
+		iesnium = {
+			bar_color = colors.lightBlue,
+			text_color = colors.white,
+			name = "Iesnium",
+			bar_name = "bars"
 		}
 	}
 	Peripherals = {
@@ -884,12 +971,15 @@ local function initialize_globals()
 		else
 			error("Invalid Monitor Selection")
 		end
+	else
+		Monitor = peripheral.wrap(monitors[1])
 	end
+	term.clear()
 end
 
 local function main()
 	--[[
-	the main function where evrything is done and where
+	the main function where everything is done and where
 		the main loop is.
 	]]
 
@@ -928,7 +1018,6 @@ local function main()
 		print_smeltery_details(
 			width,
 			height,
-			tank_height,
 			current_fill_level,
 			read_data["max_ingots"],
 			read_data["max_fluids"],
