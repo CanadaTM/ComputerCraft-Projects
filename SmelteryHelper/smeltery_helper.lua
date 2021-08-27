@@ -518,7 +518,7 @@ end
 local function draw_static_gui(width, height)
 	local button_locations = {}
 
-	term.setBackgroundColor(colours.black)
+	term.setBackgroundColor(colors.black)
 	term.setTextColor(colors.white)
 	term.clear()
 	term.setCursorPos(1,1)
@@ -730,7 +730,7 @@ local function main()
 			and yPos >= button_locations["EZ Empty"].top_left.y
 			and yPos <= button_locations["EZ Empty"].bottom_right.y
 		) then
-			term.setBackgroundColor(colours.black)
+			term.setBackgroundColor(colors.black)
 			term.setTextColor(colors.white)
 
 			local confirmation = "Beginning intelligently emptying the smeltery..."

@@ -148,7 +148,7 @@ local function draw_static_gui(monitor)
 
 	-- fully clear the monitor's view and set the
 	--  cursor to position 1, 1
-	term.setBackgroundColor(colours.black)
+	term.setBackgroundColor(colors.black)
 	term.clear()
 	term.setCursorPos(1,1)
 
