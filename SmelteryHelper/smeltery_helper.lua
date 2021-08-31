@@ -5,6 +5,7 @@ This program will be used to read a Tinkers'
 
 	VSCode max col = 52
 ]]
+
 local function initialize_globals()
 	Graphics_Mode = false
 	Offset = 1
@@ -342,6 +343,7 @@ local function initialize_globals()
 			local smeltery_periphs = string.sub(value, 12)
 			if (
 				string.find(smeltery_periphs, "smeltery")
+				or string.find(smeltery_periphs, "foundry")
 				or string.find(smeltery_periphs, "basin")
 				or string.find(smeltery_periphs, "table")
 				or string.find(smeltery_periphs, "drain")
@@ -350,6 +352,7 @@ local function initialize_globals()
 				local _, name_end = string.find(smeltery_periphs, "_")
 				if string.sub(smeltery_periphs, 0, name_end - 1) == "tank" then
 					table.insert(Peripherals.tanks, value)
+					print(value)
 				else
 					Peripherals[string.sub(smeltery_periphs, 0, name_end - 1)] = value
 				end
@@ -602,6 +605,18 @@ local function easy_empty()
 		if value.amount / 144 > 1 then table.insert(drainable, value) end
 	end
 
+	local storage
+	if #Peripherals.storages > 0 then
+		storage = Peripherals.storages[1]
+		print(
+			"I am using "
+			.. storage
+			.. " for output items."
+		)
+	else
+		error("No inventory found!")
+	end
+
 	if #drainable > 0 then
 		print("\nI found " .. #drainable .. " fluids I can drain, draining now...")
 
@@ -637,7 +652,6 @@ local function easy_empty()
 			)
 
 			if INGAME then
-				local storage
 				local drain = peripheral.wrap(
 					Peripherals.drain
 				)
@@ -647,16 +661,6 @@ local function easy_empty()
 				local casting_table = peripheral.wrap(
 					Peripherals.table
 				)
-				if #Peripherals.storages > 0 then
-					storage = Peripherals.storages[1]
-					print(
-						"I am using "
-						.. storage
-						.. " for output items."
-					)
-				else
-					error("No inventory found!")
-				end
 
 				for i = 1, drainable_blocks do
 					drain.pushFluid(
@@ -668,16 +672,6 @@ local function easy_empty()
 					while casting_basin.pushItems(
 						storage, 2
 					) == 0 do
-						-- local pulled = casting_basin.list()
-						-- print(textutils.serialise(pulled))
-						-- if #pulled > 0 then
-						-- 	local item_location, _ = next(pulled)
-						-- 	casting_basin.pushItems(
-						-- 		storage, item_location
-						-- 	)
-						-- 	print("Item pulled from inventory, casting next item...")
-						-- 	break
-						-- end
 					end
 				end
 

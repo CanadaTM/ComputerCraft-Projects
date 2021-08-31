@@ -331,10 +331,16 @@ local function read_smeltery()
 
 	-- wrap the key elements of the smeltery that
 	--  we need to read from.
-
-	local smeltery_periph = peripheral.wrap(
-		Peripherals.smeltery
-	)
+	local smeltery_periph
+	if Peripherals.smeltery then
+		smeltery_periph = peripheral.wrap(
+			Peripherals.smeltery
+		)
+	else
+		smeltery_periph = peripheral.wrap(
+			Peripherals.foundry
+		)
+	end
 	local duct_periph = peripheral.wrap(
 		Peripherals.duct
 	)
@@ -937,6 +943,7 @@ local function initialize_globals()
 			local smeltery_periphs = string.sub(value, 12)
 			if (
 				string.find(smeltery_periphs, "smeltery")
+				or string.find(smeltery_periphs, "foundry")
 				or string.find(smeltery_periphs, "tank")
 				or string.find(smeltery_periphs, "duct")
 			) then
