@@ -939,19 +939,21 @@ local function initialize_globals()
 
 	local monitors = {}
 	for _, value in ipairs(pulled_periphs) do
-		if string.find(value, "tconstruct:") then
-			local smeltery_periphs = string.sub(value, 12)
+		if string.find(value, ":") then
+			local _, semicolon = string.find(value, ":")
+			local periph_after_mod = string.sub(value, semicolon + 1)
 			if (
-				string.find(smeltery_periphs, "smeltery")
-				or string.find(smeltery_periphs, "foundry")
-				or string.find(smeltery_periphs, "tank")
-				or string.find(smeltery_periphs, "duct")
+				string.find(periph_after_mod, "smeltery")
+				or string.find(periph_after_mod, "foundry")
+				or string.find(periph_after_mod, "tank")
+				or string.find(periph_after_mod, "duct")
 			) then
-				local _, name_end = string.find(smeltery_periphs, "_")
-				if string.sub(smeltery_periphs, 0, name_end - 1) == "tank" then
+				local name_end, _ = string.find(value, "_%d-$")
+				if string.find(periph_after_mod, "tank") then
 					table.insert(Peripherals.tanks, value)
 				else
-					Peripherals[string.sub(smeltery_periphs, 0, name_end - 1)] = value
+					print(string.sub(periph_after_mod, 0, name_end - 1))
+					Peripherals[string.sub(periph_after_mod, 0, name_end - 1)] = value
 				end
 			end
 		elseif (
