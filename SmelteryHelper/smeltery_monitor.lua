@@ -410,7 +410,12 @@ local function read_smeltery()
 		and the total fluid capacity.
 	]]
 	local item_capacity = smeltery_periph.size()
-	local ingot_capacity = item_capacity * 8
+	local ingot_capacity
+	if Peripherals.smeltery then
+		ingot_capacity = item_capacity * 8
+	elseif Peripherals.foundry then
+		ingot_capacity = item_capacity * (26 + (2 / 3))
+	end
 	local fluid_capacity = ingot_capacity * 144
 
 	-- pull the current molten contents of the
@@ -426,7 +431,7 @@ local function read_smeltery()
 	local fuel_level = 0
 	local fuel_capacity = table.getn(
 		fuel_contents
-	) * 4000
+	) * 16000
 
 	-- add up the contents of all fuel tanks.
 	for _, value in ipairs(fuel_contents) do
@@ -948,7 +953,7 @@ local function initialize_globals()
 				or string.find(periph_after_mod, "tank")
 				or string.find(periph_after_mod, "duct")
 			) then
-				local name_end, _ = string.find(value, "_%d-$")
+				local _, name_end = string.find(periph_after_mod, "_")
 				if string.find(periph_after_mod, "tank") then
 					table.insert(Peripherals.tanks, value)
 				else
