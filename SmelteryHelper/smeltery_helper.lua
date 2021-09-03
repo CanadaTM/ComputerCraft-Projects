@@ -447,18 +447,18 @@ local function initialize_globals()
 						)
 					] = value
 				end
-			end
 
-		--[[
-		if the peripheral is an inventory, we just
-			put it straight into the `storages`
-			table in the Peripherals master table.
-		]]
-		elseif (
-			string.find(value, "chest")
-			or string.find(value, "barrel")
-		) then
-			table.insert(Peripherals["storages"], value)
+			--[[
+			if the peripheral is an inventory, we just
+				put it straight into the `storages`
+				table in the Peripherals master table.
+			]]
+			elseif (
+				string.find(value, "chest")
+				or string.find(value, "barrel")
+			) then
+				table.insert(Peripherals["storages"], value)
+			end
 
 		--[[
 		Now we do some thorough checking to see if
@@ -804,7 +804,7 @@ local function easy_empty()
 		drainable list.
 	]]
 	for _, value in ipairs(smeltery_contents) do
-		if value.amount / 144 > 1 then
+		if value.amount / 144 >= 1 then
 			table.insert(drainable, value)
 		end
 	end
