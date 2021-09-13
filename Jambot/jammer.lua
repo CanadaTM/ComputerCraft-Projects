@@ -4,7 +4,7 @@ JamCount = 0
 while true do
     local event, username, message = os.pullEvent("chat")
 
-    if message == ":catjam:" then
+    if message:find(":catjam:") then
         JamCount = JamCount + 1
         Chatbox.sendMessage(
             ":catjam: " .. JamCount, "Jambot"
@@ -30,6 +30,7 @@ while true do
                 ":catjam: We're jamming! :catjam:",
                 "Jambot"
             )
+            JamCount = JamCount + 2
         else
             Chatbox.sendMessage(
                 ":catjam::catjam::catjam::catjam::catjam:"
@@ -39,6 +40,7 @@ while true do
                 .. ":catjam::catjam::catjam::catjam::catjam:\n",
                 "Jambot"
             )
+            JamCount = JamCount + 22
         end
     end
 end
