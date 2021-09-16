@@ -21,7 +21,7 @@ local function monitor(reactor, chatbox, kill_temp)
     if current_temp > kill_temp then
         reactor.scram()
         chatbox.sendMessage(
-            "Hey idiot, I stopped a meltdown due to your negligence.",
+            "Reactor stopped due to high temperature.",
             "ReactorBot"
         )
         return false
@@ -39,165 +39,98 @@ local function initialize(reactor, chatbox)
     reactor.activate()
 end
 
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function findOptimalBurnRate(reactor)
     reactor.setBurnRate(0)
-    local current_burn_rate, timer = 0, 0
-    local safe = true
-    local increasing = false
+    local current_burn_rate = 0
     local previous_temp = reactor.getTemperature()
+    local increments = {5, 1, 0.1, 0.01}
+    local unsafe_rates = {}
 
     print("Finding optimal burn rate...\n")
 
-    -- coarse locating
-    print("Doing coarse locating...")
-    while safe do
-        sleep(0)
-        current_burn_rate = current_burn_rate + 5
-        timer = 0
-        local increase_count = 0
-        reactor.setBurnRate(current_burn_rate)
-        reactor.activate()
-        print("Testing if " .. current_burn_rate .. "mb/t is stable...")
-        repeat
-            sleep(0)
-            local current_temp = tonumber(string.format("%.2f", reactor.getTemperature()))
-            if timer ~= 0 then
-                if current_temp > previous_temp then
-                    increase_count = increase_count + 1
-                end
-                if increase_count > 20 then
-                    increasing = true
-                end
-            end
-            previous_temp = current_temp
-            timer = timer + 1
-        until increasing == true or timer == 150
-        reactor.scram()
-        if timer ~= 150 then
-            print(current_burn_rate .. "mb/t was not safe, going to next precision level")
-            sleep(1)
-            safe = false
-            current_burn_rate = current_burn_rate - 5
-        else
-            print("Safe, continuing...")
-        end
+    for index, value in ipairs(increments) do
+        local safe = true
 
-        if current_burn_rate == 20 then
-            break
+        print("Testing in increments of " .. value .. "mb/t")
+
+        while safe do
+
+            -- so we can yield
+            sleep(0)
+
+            -- increment the burn rate by the current increment.
+            current_burn_rate = current_burn_rate + value
+
+            if has_value(unsafe_rates, current_burn_rate) then
+                break
+            end
+
+            -- setup a variable to keep track of whether or not the temperature is increasing
+            local increase_count = 0
+
+            -- set the reactor to the new burn rate and turn on the reactor
+            reactor.setBurnRate(current_burn_rate)
+            reactor.activate()
+            print("Testing if " .. current_burn_rate .. "mb/t is stable...")
+
+            for timer = 0, ((index + 2) * 50), 1 do
+                -- get the current temp with 2 decimals precision
+                local current_temp = tonumber(string.format("%.2f", reactor.getTemperature()))
+
+                -- this will make sure we don't check the temperature change the first time we loop through
+                if timer ~= 0 then
+
+                    -- increase the increase_count variable to note that the temperature increased this loop
+                    if current_temp > previous_temp then
+                        increase_count = increase_count + 1
+                    end
+
+                    -- if we've increased a sufficient number of times this loop, we note it and kill the loop.
+                    if increase_count > 20 then
+                        -- turn off the reactor
+                        reactor.scram()
+
+                        safe = false
+                        print(current_burn_rate .. "mb/t was not safe, going to next precision level")
+
+                        -- add the value to the unsafe_rates table so we don't test the rate again
+                        table.insert(unsafe_rates, current_burn_rate)
+
+                        -- rollback the burn rate
+                        current_burn_rate = current_burn_rate - value
+                        previous_temp = current_temp
+
+                        -- allow cooling time
+                        sleep(1)
+                        break
+                    end
+                end
+
+                -- set the previous_temp variable to use for the next loop
+                previous_temp = current_temp
+            end
+
+            if safe then
+                print("Safe, continuing...")
+            end
+
+            if current_burn_rate == 20 then
+                break
+            end
         end
     end
 
-    safe = true
-    increasing = false
-    -- medium locating
-    print("Doing medium locating...")
-    while safe and current_burn_rate < 20 do
-        sleep(0)
-        current_burn_rate = current_burn_rate + 1
-        timer = 0
-        local increase_count = 0
-        reactor.setBurnRate(current_burn_rate)
-        reactor.activate()
-        print("Testing if " .. current_burn_rate .. "mb/t is stable...")
-        repeat
-            sleep(0)
-            local current_temp = tonumber(string.format("%.2f", reactor.getTemperature()))
-            if timer ~= 0 then
-                if current_temp > previous_temp then
-                    increase_count = increase_count + 1
-                end
-                if increase_count > 60 then
-                    increasing = true
-                end
-            end
-            previous_temp = current_temp
-            timer = timer + 1
-        until increasing == true or timer == 150
-        reactor.scram()
-        if timer ~= 150 then
-            print(current_burn_rate .. "mb/t was not safe, going to next precision level")
-            sleep(1)
-            safe = false
-            current_burn_rate = current_burn_rate - 1
-        else
-            print("Safe, continuing...")
-        end
-    end
-
-    safe = true
-    increasing = false
-    -- fine locating
-    print("Doing fine locating...")
-    while safe and current_burn_rate < 20 do
-        sleep(0)
-        current_burn_rate = current_burn_rate + 0.1
-        timer = 0
-        local increase_count = 0
-        reactor.setBurnRate(current_burn_rate)
-        reactor.activate()
-        print("Testing if " .. current_burn_rate .. "mb/t is stable...")
-        repeat
-            sleep(0)
-            local current_temp = tonumber(string.format("%.2f", reactor.getTemperature()))
-            if timer ~= 0 then
-                if current_temp > previous_temp then
-                    increase_count = increase_count + 1
-                end
-                if increase_count > 100 then
-                    increasing = true
-                end
-            end
-            previous_temp = current_temp
-            timer = timer + 1
-        until increasing == true or timer == 200
-        reactor.scram()
-        if timer ~= 200 then
-            print(current_burn_rate .. "mb/t was not safe, going to next precision level")
-            sleep(1)
-            safe = false
-            current_burn_rate = current_burn_rate - 0.1
-        else
-            print("Safe, continuing...")
-        end
-    end
-
-    safe = true
-    increasing = false
-    -- ultrafine locating
-    print("Doing ultrafine locating...")
-    while safe and current_burn_rate < 20 do
-        sleep(0)
-        current_burn_rate = current_burn_rate + 0.01
-        timer = 0
-        local increase_count = 0
-        reactor.setBurnRate(current_burn_rate)
-        reactor.activate()
-        print("Testing if " .. current_burn_rate .. "mb/t is stable...")
-        repeat
-            sleep(0)
-            local current_temp = tonumber(string.format("%.2f", reactor.getTemperature()))
-            if timer ~= 0 then
-                if current_temp > previous_temp then
-                    increase_count = increase_count + 1
-                end
-                if increase_count > 100 then
-                    increasing = true
-                end
-            end
-            previous_temp = current_temp
-            timer = timer + 1
-        until increasing == true or timer == 250
-        reactor.scram()
-        if timer ~= 250 then
-            print(current_burn_rate .. "mb/t is the optimal burn rate")
-            sleep(1)
-            safe = false
-            current_burn_rate = current_burn_rate - 0.01
-        else
-            print("Safe, continuing...")
-        end
-    end
-
+    print(current_burn_rate .. "mb/t is the optimal burn rate.")
     reactor.setBurnRate(current_burn_rate)
     reactor.activate()
 end
