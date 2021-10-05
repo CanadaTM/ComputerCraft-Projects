@@ -22,7 +22,7 @@ local function defineGlobals()
 end
 
 local function has_value (tab, val)
-    for index, value in ipairs(tab) do
+    for _, value in ipairs(tab) do
         if value == val then
             return true
         end
@@ -34,15 +34,16 @@ end
 local function main()
     defineGlobals()
 
-    breaker = peripheral.wrap(BlockBreaker)
-    placer = peripheral.wrap(BlockPlacer)
-    detector = peripheral.wrap(PlayerDetector)
-    integrator = peripheral.wrap(RedstoneIntegrator)
+    -- local breaker = peripheral.wrap(BlockBreaker)
+    -- local placer = peripheral.wrap(BlockPlacer)
+    local detector = peripheral.wrap(PlayerDetector)
+    local integrator = peripheral.wrap(RedstoneIntegrator)
 
     while has_value(detector.getOnlinePlayers(), "Canada_TM") or has_value(detector.getOnlinePlayers(), "HarveyTheKat") do
         integrator.setOutput("left", false)
         integrator.setOutput("right", true)
     end
+
     integrator.setOutput("left", true)
     integrator.setOutput("right", false)
 end
