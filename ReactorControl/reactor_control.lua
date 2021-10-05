@@ -120,16 +120,19 @@ local function findOptimalBurnRate(reactor)
                 previous_temp = current_temp
             end
 
-            if safe then
-                print("Safe, continuing...")
-            end
-
             if current_burn_rate == 20 then
                 break
             end
+
+            if safe then
+                print("Safe, continuing...")
+            end
+        end
+
+        if current_burn_rate == 20 then
+            break
         end
     end
-
     print(current_burn_rate .. "mb/t is the optimal burn rate.")
     reactor.setBurnRate(current_burn_rate)
     reactor.activate()
