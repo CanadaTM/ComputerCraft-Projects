@@ -1,6 +1,7 @@
 local function defineGlobals()
     ReactorPeriph = ""
     ChatBoxPeriph = ""
+    ChatBotName = "ZControl"
 
     local periphs = peripheral.getNames()
 
@@ -22,7 +23,7 @@ local function monitor(reactor, chatbox, kill_temp)
         reactor.scram()
         chatbox.sendMessage(
             "Reactor stopped due to high temperature.",
-            "ReactorBot"
+            ChatBotName
         )
         return false
     else
@@ -34,7 +35,7 @@ local function initialize(reactor, chatbox)
     reactor.scram()
     chatbox.sendMessage(
         "Looks like this program just started, rebooting the reactor to monitor accurately",
-        "ReactorBot"
+        ChatBotName
     )
     reactor.activate()
 end
@@ -120,7 +121,7 @@ local function findOptimalBurnRate(reactor)
                 previous_temp = current_temp
             end
 
-            if current_burn_rate == 20 then
+            if current_burn_rate == reactor.getMaxBurnRate() then
                 break
             end
 
@@ -129,7 +130,7 @@ local function findOptimalBurnRate(reactor)
             end
         end
 
-        if current_burn_rate == 20 then
+        if current_burn_rate == reactor.getMaxBurnRate() then
             break
         end
     end
@@ -154,18 +155,18 @@ local function main()
         ) do sleep(0) end
         chatbox.sendMessage(
             "The reactor was stopped before meltdown, do you want to reboot it?",
-            "ReactorBot"
+            ChatBotName
         )
         local _, username, message = os.pullEvent("chat")
         if message:lower() == "yes" and username == "Canada_TM" then
             chatbox.sendMessage(
                 "Of course, my liege",
-                "ReactorBot"
+                ChatBotName
             )
         else
             chatbox.sendMessage(
                 "Keeping reactor off until you manually reboot it.",
-                "ReactorBot"
+                ChatBotName
             )
         end
     end
