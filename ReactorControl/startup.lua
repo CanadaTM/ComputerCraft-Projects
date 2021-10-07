@@ -1,6 +1,7 @@
 local function defineGlobals()
     ReactorPeriph = ""
     ChatBoxPeriph = ""
+    ChatBotName = "ZControl"
 
     local periphs = peripheral.getNames()
 
@@ -22,7 +23,7 @@ local function main()
     peripheral.wrap(ReactorPeriph).scram()
     peripheral.wrap(ChatBoxPeriph).sendMessage(
         "The reactor_control program crashed, stopping reactor",
-        "ReactorBot"
+        ChatBotName
     )
 end
 
