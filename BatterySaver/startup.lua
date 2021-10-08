@@ -1,1 +1,1 @@
-shell.run("battery_saver")
+shell.run("repo/BatterySaver/battery_saver.lua")

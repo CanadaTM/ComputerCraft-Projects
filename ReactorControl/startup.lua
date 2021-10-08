@@ -19,7 +19,7 @@ end
 local function main()
     defineGlobals()
 
-    pcall(shell.run("reactor_control"))
+    pcall(shell.run("repo/ReactorControl/reactor_control.lua"))
     peripheral.wrap(ReactorPeriph).scram()
     peripheral.wrap(ChatBoxPeriph).sendMessage(
         "The reactor_control program crashed, stopping reactor",
