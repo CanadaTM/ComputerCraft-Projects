@@ -5,7 +5,6 @@ end
 
 ws.send("Hello world!")
 local response = ws.receive()
-assert(response == "Hello world!", "Received wrong response!")
 print(response)
 
 -- Don't forget to close the connection!
