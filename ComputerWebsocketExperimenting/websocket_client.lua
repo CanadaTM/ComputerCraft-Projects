@@ -3,7 +3,7 @@ if not ws then
     return printError(err)
 end
 
-ws.send("Hello world!")
+ws.send("cc_computer_connected")
 local response = ws.receive()
 print(response)
 

@@ -1,15 +1,37 @@
+#!/usr/bin/env python
+
 import asyncio
-from websockets import serve
+import websockets
 
 
-async def echo(websocket):
-    async for message in websocket:
-        await websocket.send(f"{message} from the server")
+async def handler(websocket):
+    await connect_browser(websocket)
+    await connect_cc_computer(websocket)
+
+    print("browser and computer connected successfully!")
+
+
+async def connect_browser(websocket):
+    message = await websocket.recv()
+    print(f"Recieved: {message}")
+
+    if message == "browser_connected":
+        print("Browser connection established")
+
+
+async def connect_cc_computer(websocket):
+    message = await websocket.recv()
+    print(f"Recieved: {message}")
+
+    if message == "cc_computer_connected":
+        print("ComputerCraft Computer connection established")
 
 
 async def main():
-    async with serve(echo, "localhost", 5757):
-        await asyncio.Future()  # run forever
+    stop = asyncio.Future()
+    async with websockets.serve(handler, "", 5757):
+        await stop
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
