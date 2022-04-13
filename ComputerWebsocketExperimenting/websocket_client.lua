@@ -1,11 +1,44 @@
-local ws, err = http.websocket("ws://localhost:5757")
-if not ws then
-    return printError(err)
+json = require("json")
+
+local function connect_websocket()
+    local ws, err = http.websocket("ws://localhost:5757/computer/")
+    if not ws then
+        return printError(err)
+    end
+
+    ws.send("CC Computer Connected")
+
+    return ws
 end
 
-ws.send("cc_computer_connected")
-local response = ws.receive()
-print(response)
+local function handler(ws)
+    local terminated = false
+    local timer = 1
+    while not terminated do
+        local message = ws.receive(1)
 
--- Don't forget to close the connection!
-ws.close()
+        print(timer)
+
+        if message then
+            message = json.decode(message)
+
+            if message["command"] == "eval" then
+                print('Trying to run: [ ' .. message["data"] .. ' ]')
+                assert(load(message["data"]))()
+            end
+        end
+
+        timer = timer + 1
+    end
+end
+
+local function main()
+    local websocket = connect_websocket()
+
+    handler(websocket)
+
+    --! Don't forget to close the connection!
+    websocket.close()
+end
+
+main()

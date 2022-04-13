@@ -1,17 +1,19 @@
-const websocket = new WebSocket("ws://localhost:5757");
+const websocket = new WebSocket("ws://localhost:5757/browser");
 
 websocket.addEventListener("open", (event) => {
-    websocket.send("browser_connected");
+    websocket.send("Browser Connected");
 });
+
+function delay(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
 
 function ProcessMessage() {
     const input_text = document.getElementById("textbox").value;
-    websocket.send(input_text);
+    websocket.send("toComputer->eval`" + input_text);
+}
 
-    websocket.onmessage = ({ data }) => {
-        const message = document.createElement("P");
-        const content = document.createTextNode(data);
-        message.appendChild(content);
-        document.body.appendChild(message);
-    };
+function TerminateConnection() {
+    websocket.send("terminate");
+    websocket.close();
 }
