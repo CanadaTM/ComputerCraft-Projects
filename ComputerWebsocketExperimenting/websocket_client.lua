@@ -1,7 +1,7 @@
 json = require("json")
 
 local function connect_websocket()
-    local ws, err = http.websocket("ws://localhost:5757/computer/")
+    local ws, err = http.websocket("ws://localhost:5757/computer")
     if not ws then
         return printError(err)
     end
@@ -17,8 +17,6 @@ local function handler(ws)
     while not terminated do
         local message = ws.receive(1)
 
-        print(timer)
-
         if message then
             message = json.decode(message)
 
@@ -27,8 +25,6 @@ local function handler(ws)
                 assert(load(message["data"]))()
             end
         end
-
-        timer = timer + 1
     end
 end
 

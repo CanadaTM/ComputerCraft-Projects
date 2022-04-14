@@ -10,9 +10,6 @@ class CustomWebSocketServer:
         self.host: str = host
         self.port: int = port
 
-        self.computer_path: str = ""
-        self.browser_path: str = ""
-
         self.ws_clients: set = set()
 
     async def run(self):
@@ -43,7 +40,7 @@ class CustomWebSocketServer:
                 if not msg_rx:
                     break
 
-                # print(f"RX: {msg_rx}")
+                print(f"RX: {msg_rx}")
 
                 # Add to Queue
                 await self.queue_rx.put((msg_rx, path))
@@ -62,9 +59,6 @@ class CustomWebSocketServer:
             path: str
             data, path = await self.queue_rx.get()
 
-            if data == "CC Computer Connected":
-                self.computer_path = path
-
             # Process them like storing to file or forward to other code
             print(f"{data = }, {path = }")  # print as stand-in for more complex code
 
@@ -80,7 +74,7 @@ class CustomWebSocketServer:
 
     async def send_to_computer(self, payload: Dict[str, str]):
         for ws in self.ws_clients:
-            if ws.path == self.computer_path:
+            if ws.path == "/computer":
                 await ws.send(json.dumps(payload))
 
     async def computer_watchdog(self):
