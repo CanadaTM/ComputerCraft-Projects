@@ -1,1 +1,1 @@
-shell.run("repo/SeasonQuary/seasonquery.lua")
+shell.run("repo/SeasonQuery/seasonquery.lua")

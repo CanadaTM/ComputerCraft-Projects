@@ -24,22 +24,26 @@ local function main()
 
     while true do
         local _, username, message = os.pullEvent("chat")
-        if getSeason() ~= currentSeason then
-            currentSeason = getSeason()
+
+        if string.find(message, "season") and string.find(message, "?") then
             chatBox.sendMessage(
-                "The season has changed!",
-                "DeeDee Megadoodoo"
-            )
-            sleep(1)
-            chatBox.sendMessage(
-                "It is now:" .. currentSeason,
+                "Well " .. username .. ", It is currently:" .. currentSeason,
                 "DeeDee Megadoodoo"
             )
         end
 
-        if message:find("season") and message:find("?") then
+        if getSeason() ~= currentSeason then
+            currentSeason = getSeason()
+
             chatBox.sendMessage(
-                "Well " .. username .. ", It is currently:" .. currentSeason,
+                "The season has changed!",
+                "DeeDee Megadoodoo"
+            )
+
+            sleep(1)
+
+            chatBox.sendMessage(
+                "It is now:" .. currentSeason,
                 "DeeDee Megadoodoo"
             )
         end
