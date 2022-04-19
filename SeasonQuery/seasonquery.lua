@@ -23,14 +23,16 @@ local function main()
     local currentSeason = getSeason()
 
     while true do
-        local _, username, message = os.pullEvent("chat")
+        --! looks like this pull event from Advanced Peripherals isn't working(?) so for now it's disabled.
+        --!   Uncomment to allow for asking for the current season.
+        -- local _, username, message = os.pullEvent("chat")
 
-        if string.find(message, "season") and string.find(message, "?") then
-            Chatbox.sendMessage(
-                "Well " .. username .. ", It is currently:" .. currentSeason,
-                "DeeDee Megadoodoo"
-            )
-        end
+        -- if string.find(message, "season") and string.find(message, "?") then
+        --     Chatbox.sendMessage(
+        --         "Well " .. username .. ", It is currently:" .. currentSeason,
+        --         "DeeDee Megadoodoo"
+        --     )
+        -- end
 
         if getSeason() ~= currentSeason then
             currentSeason = getSeason()
@@ -43,7 +45,7 @@ local function main()
             sleep(1)
 
             Chatbox.sendMessage(
-                "It is now:" .. currentSeason,
+                "It is now: " .. currentSeason,
                 "DeeDee Megadoodoo"
             )
         end
