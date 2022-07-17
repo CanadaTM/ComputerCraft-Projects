@@ -1011,10 +1011,10 @@ local function read_smeltery()
 		)
 	local ingot_capacity
 	if Peripherals.smeltery then
-		ingot_capacity = item_capacity * 8
+		ingot_capacity = item_capacity * 12
 	elseif Peripherals.foundry then
 		ingot_capacity = (
-			item_capacity * (26 + (2 / 3))
+			item_capacity * (33 + (1 / 3))
 			)
 	end
 	local fluid_capacity = ingot_capacity * Ingot_Size
@@ -1030,7 +1030,7 @@ local function read_smeltery()
 	]]
 	local fuel_contents = lava_tank_periph.tanks()
 	local fuel_level = 0
-	local fuel_capacity = #fuel_contents * 16000
+	local fuel_capacity = #fuel_contents * 32000
 
 	-- add up the contents of all fuel tanks.
 	for _, value in ipairs(fuel_contents) do
