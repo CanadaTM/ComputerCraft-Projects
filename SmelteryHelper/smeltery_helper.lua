@@ -19,6 +19,7 @@ local function initialize_globals()
 	-- 	massive ore table.
 	Graphics_Mode = false
 	Offset = 1
+	Ingot_Size = 90
 	Ore_Colors = {
 		clay = {
 			bar_color = colors.brown,
@@ -393,22 +394,22 @@ local function initialize_globals()
 				string.find(
 					periph_after_mod, "smeltery"
 				)
-				or string.find(
-					periph_after_mod, "foundry"
-				)
-				or string.find(
-					periph_after_mod, "basin"
-				)
-				or string.find(
-					periph_after_mod, "table"
-				)
-				or string.find(
-					periph_after_mod, "drain"
-				)
-				or string.find(
-					periph_after_mod, "duct"
-				)
-			) then
+					or string.find(
+						periph_after_mod, "foundry"
+					)
+					or string.find(
+						periph_after_mod, "basin"
+					)
+					or string.find(
+						periph_after_mod, "table"
+					)
+					or string.find(
+						periph_after_mod, "drain"
+					)
+					or string.find(
+						periph_after_mod, "duct"
+					)
+				) then
 
 				--[[
 				Find the end of the name of the
@@ -429,10 +430,10 @@ local function initialize_globals()
 					string.find(
 						periph_after_mod, "tank"
 					)
-				) then
+					) then
 					table.insert(Peripherals.tanks, value)
 
-				--[[
+					--[[
 				If it's anything other than a tank,
 					we just add it to the master
 					Peripheral table at the index
@@ -445,22 +446,22 @@ local function initialize_globals()
 							0,
 							name_end - 1
 						)
-					] = value
+						] = value
 				end
 
-			--[[
+				--[[
 			if the peripheral is an inventory, we just
 				put it straight into the `storages`
 				table in the Peripherals master table.
 			]]
 			elseif (
 				string.find(value, "chest")
-				or string.find(value, "barrel")
-			) then
+					or string.find(value, "barrel")
+				) then
 				table.insert(Peripherals["storages"], value)
 			end
 
-		--[[
+			--[[
 		Now we do some thorough checking to see if
 			the current peripheral in the loop is
 			a monitor or the name of a side that
@@ -469,19 +470,19 @@ local function initialize_globals()
 		]]
 		elseif (
 			string.find(value, "monitor")
-			or string.find(value, "left")
-			and peripheral.getType("left") == "monitor"
-			or string.find(value, "right")
-			and peripheral.getType("right") == "monitor"
-			or string.find(value, "up")
-			and peripheral.getType("up") == "monitor"
-			or string.find(value, "down")
-			and peripheral.getType("down") == "monitor"
-			or string.find(value, "back")
-			and peripheral.getType("back") == "monitor"
-			or string.find(value, "front")
-			and peripheral.getType("front") == "monitor"
-		) then
+				or string.find(value, "left")
+				and peripheral.getType("left") == "monitor"
+				or string.find(value, "right")
+				and peripheral.getType("right") == "monitor"
+				or string.find(value, "up")
+				and peripheral.getType("up") == "monitor"
+				or string.find(value, "down")
+				and peripheral.getType("down") == "monitor"
+				or string.find(value, "back")
+				and peripheral.getType("back") == "monitor"
+				or string.find(value, "front")
+				and peripheral.getType("front") == "monitor"
+			) then
 			table.insert(monitors, value)
 		end
 	end
@@ -522,16 +523,16 @@ local function initialize_globals()
 		local answer = read()
 		if (
 			tonumber(answer)
-			and tonumber(answer) <= #monitors
-		) then
+				and tonumber(answer) <= #monitors
+			) then
 			Monitor = peripheral.wrap(monitors[
 				tonumber(answer)
-			])
+				])
 		else
 			error("Invalid Monitor Selection")
 		end
 
-	--[[
+		--[[
 	If there's only 1 monitor, we just set the global
 		Monitor variable to that one monitor.
 	]]
@@ -543,14 +544,48 @@ local function initialize_globals()
 	term.clear()
 end
 
+local function check_needed_peripherals()
+	if not Peripherals.smeltery or not Peripherals.foundry then
+		print(
+			"!!WARNING!! I cannot detect a smeltery or"
+			.. " a foundry, it's likely because the"
+			.. " other does exist, but this is just a"
+			.. " warning.")
+	end
+
+	if (
+		not Peripherals.basin
+			or not Peripherals.drain
+			or not Peripherals.duct
+			or not Peripherals.table
+			or not Peripherals.storages[1]
+		) then
+		error(
+			"I am missing a key peripheral!"
+			.. "\n\tHere's a list of the peripherals"
+			.. " I need and what I already see:"
+			.. "\n\t\t Casting Basin:"
+			.. Peripherals.basin
+			.. "\n\t\t Casting Table:"
+			.. Peripherals.table
+			.. "\n\t\t Foundry/Smeltery Drain"
+			.. Peripherals.drain
+			.. "\n\t\t Foundry/Smeltery Duct"
+			.. Peripherals.duct
+			.. "\n\t\t Inventories"
+			.. texutils.serialize(Peripherals.storages)
+		)
+	end
+end
+
 local function draw_box_from_center(
-	center_x,
-	center_y,
-	width,
-	height,
-	color,
-	filled,
-	fancy
+    center_x,
+    center_y,
+    width,
+    height,
+    color,
+    filled,
+    fancy
 )
 	--[[
 	This function behaves similarly to the builtin
@@ -689,14 +724,14 @@ local function draw_static_gui(width, height)
 	term.setBackgroundColor(colors.black)
 	term.setTextColor(colors.white)
 	term.clear()
-	term.setCursorPos(1,1)
+	term.setCursorPos(1, 1)
 
 	-- Print the title in the center of the monitor.
 	local title = "Smeltery Automated Tools"
 	term.setCursorPos(
 		math.ceil((
 			width - string.len(title)
-		) / 2),
+			) / 2),
 		1
 	)
 	term.setBackgroundColor(colors.black)
@@ -710,7 +745,7 @@ local function draw_static_gui(width, height)
 	local label_ez_empty = "EZ Empty"
 	local locations = draw_box_from_center(
 		math.floor(0.25 * width),
-		2/3 * height,
+		2 / 3 * height,
 		string.len(label_ez_empty) + 1,
 		2,
 		colors.lightGray,
@@ -733,7 +768,7 @@ local function draw_static_gui(width, height)
 	term.setCursorPos(
 		(0.25 * width)
 		- (string.len(label_ez_empty) / 2),
-		2/3 * height
+		2 / 3 * height
 	)
 	print(label_ez_empty)
 	-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -751,7 +786,7 @@ local function get_smeltery_contents()
 	if INGAME then
 		return (
 			peripheral.wrap(Peripherals.duct).tanks()
-		)
+			)
 	else
 		return {
 			[1] = {
@@ -804,7 +839,7 @@ local function easy_empty()
 		drainable list.
 	]]
 	for _, value in ipairs(smeltery_contents) do
-		if value.amount / 144 >= 1 then
+		if value.amount / Ingot_Size >= 1 then
 			table.insert(drainable, value)
 		end
 	end
@@ -844,7 +879,7 @@ local function easy_empty()
 			-- calculate how many blocks and ingots
 			-- 	we need to drain
 			local drainable_ingots = math.floor(
-				value.amount / 144
+				value.amount / Ingot_Size
 			)
 			local drainable_blocks = 0
 			if drainable_ingots >= 9 then
@@ -853,7 +888,7 @@ local function easy_empty()
 				)
 				drainable_ingots = (
 					drainable_ingots % 9
-				)
+					)
 			end
 
 			-- find the start of the name of the ore
@@ -881,17 +916,17 @@ local function easy_empty()
 								value.name,
 								name_start + 1
 							)
-						]
-					) then return true
+							]
+						) then return true
 					else error() end
 				end
 				)
-			) then
+				) then
 				ore = Ore_Colors[
 					string.sub(
 						value.name, name_start + 1
 					)
-				]
+					]
 			else
 				ore = {
 					bar_color = colors.lightGray,
@@ -908,7 +943,7 @@ local function easy_empty()
 				.. drainable_blocks
 				.. " blocks and "
 				.. drainable_ingots
-				.. " ".. ore.bar_name .." of "
+				.. " " .. ore.bar_name .. " of "
 				.. ore.name
 			)
 
@@ -923,12 +958,12 @@ local function easy_empty()
 					peripheral.wrap(
 						Peripherals.basin
 					)
-				)
+					)
 				local casting_table = (
 					peripheral.wrap(
 						Peripherals.table
 					)
-				)
+					)
 
 				-- loop through the drainable blocks.
 				for i = 1, drainable_blocks do
@@ -975,7 +1010,7 @@ local function easy_empty()
 					end
 				end
 
-			-- if we're not ingame
+				-- if we're not ingame
 			else
 				--[[
 				TODO: This is supposed to be where
@@ -988,12 +1023,12 @@ local function easy_empty()
 					for j = 1, #smeltery_contents do
 						if (
 							value.name
-							== smeltery_contents[j].name
-						) then
+								== smeltery_contents[j].name
+							) then
 							smeltery_contents[j].amount = (
 								smeltery_contents[j].amount
-								- (9 * 144)
-							)
+									- (9 * 144)
+								)
 							break
 						end
 						sleep(2)
@@ -1004,12 +1039,12 @@ local function easy_empty()
 					for j = 1, #smeltery_contents do
 						if (
 							value.name
-							== smeltery_contents[j].name
-						) then
+								== smeltery_contents[j].name
+							) then
 							smeltery_contents[j].amount = (
 								smeltery_contents[j].amount
-								- 144
-							)
+									- 144
+								)
 							break
 						end
 						sleep(2)
@@ -1034,6 +1069,7 @@ end
 local function main()
 
 	initialize_globals()
+	check_needed_peripherals()
 
 	local oldterm = term.redirect(Monitor)
 	--! Now all term.* calls will go to the monitor
@@ -1089,17 +1125,17 @@ local function main()
 		if (
 			xPos >= button_locations[
 				"EZ Empty"
-			].top_left.x
-			and xPos <= button_locations[
+				].top_left.x
+				and xPos <= button_locations[
 				"EZ Empty"
-			].bottom_right.x
-			and yPos >= button_locations[
+				].bottom_right.x
+				and yPos >= button_locations[
 				"EZ Empty"
-			].top_left.y
-			and yPos <= button_locations[
+				].top_left.y
+				and yPos <= button_locations[
 				"EZ Empty"
-			].bottom_right.y
-		) then
+				].bottom_right.y
+			) then
 
 			-- ensure the text is in it's default
 			-- 	state
@@ -1110,8 +1146,8 @@ local function main()
 			-- 	centrally on the screen.
 			local confirmation = (
 				"Beginning intelligently emptying "
-				.. "the smeltery..."
-			)
+					.. "the smeltery..."
+				)
 			term.setCursorPos(
 				(math.ceil(
 					width - string.len(confirmation)

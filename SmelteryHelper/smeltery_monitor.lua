@@ -20,6 +20,7 @@ local function initialize_globals()
 	-- 	massive ore table.
 	Graphics_Mode = false
 	Offset = 1
+	Ingot_Size = 90
 	Ore_Colors = {
 		clay = {
 			bar_color = colors.brown,
@@ -393,16 +394,16 @@ local function initialize_globals()
 				string.find(
 					periph_after_mod, "smeltery"
 				)
-				or string.find(
-					periph_after_mod, "foundry"
-				)
-				or string.find(
-					periph_after_mod, "tank"
-				)
-				or string.find(
-					periph_after_mod, "duct"
-				)
-			) then
+					or string.find(
+						periph_after_mod, "foundry"
+					)
+					or string.find(
+						periph_after_mod, "tank"
+					)
+					or string.find(
+						periph_after_mod, "duct"
+					)
+				) then
 
 				--[[
 				Find the end of the name of the
@@ -423,10 +424,10 @@ local function initialize_globals()
 					string.find(
 						periph_after_mod, "tank"
 					)
-				) then
+					) then
 					table.insert(Peripherals.tanks, value)
 
-				--[[
+					--[[
 				If it's anything other than a tank,
 					we just add it to the master
 					Peripheral table at the index
@@ -439,30 +440,30 @@ local function initialize_globals()
 							0,
 							name_end - 1
 						)
-					] = value
+						] = value
 				end
 			end
 
-		--[[
+			--[[
 		if the peripheral is an inventory, we just
 			put it straight into the `storages`
 			table in the Peripherals master table.
 		]]
 		elseif (
 			string.find(value, "monitor")
-			or string.find(value, "left")
-			and peripheral.getType("left") == "monitor"
-			or string.find(value, "right")
-			and peripheral.getType("right") == "monitor"
-			or string.find(value, "up")
-			and peripheral.getType("up") == "monitor"
-			or string.find(value, "down")
-			and peripheral.getType("down") == "monitor"
-			or string.find(value, "back")
-			and peripheral.getType("back") == "monitor"
-			or string.find(value, "front")
-			and peripheral.getType("front") == "monitor"
-		) then
+				or string.find(value, "left")
+				and peripheral.getType("left") == "monitor"
+				or string.find(value, "right")
+				and peripheral.getType("right") == "monitor"
+				or string.find(value, "up")
+				and peripheral.getType("up") == "monitor"
+				or string.find(value, "down")
+				and peripheral.getType("down") == "monitor"
+				or string.find(value, "back")
+				and peripheral.getType("back") == "monitor"
+				or string.find(value, "front")
+				and peripheral.getType("front") == "monitor"
+			) then
 			table.insert(monitors, value)
 		end
 	end
@@ -507,7 +508,7 @@ local function initialize_globals()
 			error("Invalid Monitor Selection")
 		end
 
-	--[[
+		--[[
 	If there's only 1 monitor, we just set the global
 		Monitor variable to that one monitor.
 	]]
@@ -519,13 +520,38 @@ local function initialize_globals()
 	term.clear()
 end
 
+local function check_needed_peripherals()
+	if not Peripherals.smeltery or not Peripherals.foundry then
+		print(
+			"!!WARNING!! I cannot detect a smeltery or"
+			.. " a foundry, it's likely because the"
+			.. " other does exist, but this is just a"
+			.. " warning.")
+	end
+
+	if (
+		not Peripherals.tanks[1]
+			or not Peripherals.duct
+		) then
+		error(
+			"I am missing a key peripheral!"
+			.. "\n\tHere's a list of the peripherals"
+			.. " I need and what I already see:"
+			.. "\n\t\t Foundry/Smeltery Duct"
+			.. Peripherals.duct
+			.. "\n\t\t Tanks"
+			.. texutils.serialize(Peripherals.tanks)
+		)
+	end
+end
+
 local function draw_box_from_center(
-	center_x,
-	center_y,
-	width,
-	height,
-	color,
-	filled
+    center_x,
+    center_y,
+    width,
+    height,
+    color,
+    filled
 )
 	--[[
 	This function behaves similarly to the builtin
@@ -562,7 +588,7 @@ local function draw_box_from_center(
 end
 
 local function draw_tank_graduations(
-	width, height, tank_height
+    width, height, tank_height
 )
 	--[[
 	This function handles drawing the graduations
@@ -662,7 +688,7 @@ local function draw_static_gui(monitor)
 	--  cursor to position 1, 1
 	term.setBackgroundColor(colors.black)
 	term.clear()
-	term.setCursorPos(1,1)
+	term.setCursorPos(1, 1)
 
 	-- draw the smeltery tank
 	local tank_height = draw_smeltery_tank(
@@ -674,7 +700,7 @@ local function draw_static_gui(monitor)
 	local title = "Smelt.io"
 	term.setCursorPos(
 		(
-			math.floor(width / 2)
+		math.floor(width / 2)
 			- string.len(title)
 		) / 2,
 		1
@@ -688,7 +714,7 @@ local function draw_static_gui(monitor)
 	term.setCursorPos(
 		math.ceil(width / 2)
 		+ ((math.ceil(width / 2)
-		- string.len(tank_title)) / 2),
+			- string.len(tank_title)) / 2),
 		1
 	)
 	term.setBackgroundColor(colors.black)
@@ -701,11 +727,11 @@ local function draw_static_gui(monitor)
 end
 
 local function fill_gui_tank(
-	smeltery_contents,
-	max_fluids,
-	width,
-	height,
-	tank_height
+    smeltery_contents,
+    max_fluids,
+    width,
+    height,
+    tank_height
 )
 	--[[
 	This function takes in a table containing the
@@ -759,28 +785,27 @@ local function fill_gui_tank(
 			)
 			local metal_amount = value.amount
 			local percentage_taken_up =
-				metal_amount / max_fluids
+			metal_amount / max_fluids
 
 			if (
 				percentage_taken_up
-				> 1 / tank_height
-			) then
+					> 1 / tank_height
+				) then
 				percentage_taken_up = (
 					percentage_taken_up
-					+ ((1 / tank_height) / 2)
-				)
-				percentage_taken_up = (
-					percentage_taken_up
-					- (
-						percentage_taken_up
-						% (1 / tank_height)
+						+ ((1 / tank_height) / 2)
 					)
-				)
+				percentage_taken_up = (
+					percentage_taken_up
+						- (
+						percentage_taken_up
+							% (1 / tank_height)
+						)
+					)
 			end
 
 			-- add to the total liquid count.
-			total_liquids =
-				total_liquids + value.amount
+			total_liquids = total_liquids + value.amount
 
 			--[[
 			Try to index the Ore_Colors global
@@ -815,7 +840,7 @@ local function fill_gui_tank(
 				next_y,
 				(width / 2) + 1,
 				next_y - (
-					percentage_taken_up
+				percentage_taken_up
 					* tank_height
 				) + 1,
 				ore.bar_color
@@ -823,20 +848,20 @@ local function fill_gui_tank(
 
 			-- display the name of the ore overtop the bar
 			local detailed_string =
-				ore.name
+			ore.name
 				.. ", " .. string.format(
-					"%.2f", metal_amount / 144
+					"%.2f", metal_amount / Ingot_Size
 				) .. " " .. ore.bar_name
 
 			if (
 				string.len(detailed_string)
-				< max_string_length
-			) then
+					< max_string_length
+				) then
 				term.setCursorPos(
 					math.ceil(width / 2)
 					+ (
-						(
-							math.ceil(width / 2)
+					(
+						math.ceil(width / 2)
 							- string.len(
 								detailed_string
 							)
@@ -850,7 +875,7 @@ local function fill_gui_tank(
 				term.setCursorPos(
 					math.ceil(width / 2)
 					+ ((math.ceil(width / 2)
-					- string.len(ore.name)) / 2),
+						- string.len(ore.name)) / 2),
 					next_y
 				)
 				term.setTextColor(ore.text_color)
@@ -863,17 +888,17 @@ local function fill_gui_tank(
 			if percentage_taken_up == 0 then
 				next_y = (
 					next_y
-					- (1 / tank_height)
-					* tank_height
-				)
+						- (1 / tank_height)
+						* tank_height
+					)
 			else
 				next_y = (
 					next_y
-					- (
+						- (
 						percentage_taken_up
-						* tank_height
+							* tank_height
+						)
 					)
-				)
 			end
 		end
 
@@ -945,15 +970,15 @@ local function read_smeltery()
 					name = "tconstruct:molten_debris"
 				},
 				[3] = {
-					amount = 15 * 144,
+					amount = 15 * Ingot_Size,
 					name = "tconstruct:molten_ender"
 				},
 				[4] = {
-					amount = 25 * 144,
+					amount = 25 * Ingot_Size,
 					name = "tconstruct:molten_netherite"
 				},
 				[5] = {
-					amount = 20 * 144,
+					amount = 20 * Ingot_Size,
 					name = "fakemod:molten_unobtanium"
 				}
 			}
@@ -978,16 +1003,16 @@ local function read_smeltery()
 	]]
 	local item_capacity = (
 		smeltery_periph.size()
-	)
+		)
 	local ingot_capacity
 	if Peripherals.smeltery then
 		ingot_capacity = item_capacity * 8
 	elseif Peripherals.foundry then
 		ingot_capacity = (
 			item_capacity * (26 + (2 / 3))
-		)
+			)
 	end
-	local fluid_capacity = ingot_capacity * 144
+	local fluid_capacity = ingot_capacity * Ingot_Size
 
 	-- pull the current molten contents of the
 	--  smeltery
@@ -1016,19 +1041,19 @@ local function read_smeltery()
 		max_fuel = fuel_capacity,
 		fuel_fill_level = (
 			fuel_level / fuel_capacity
-		)
+			)
 	}
 
 end
 
 local function print_smeltery_details(
-	width,
-	height,
-	current_fill_level,
-	ingot_capacity,
-	fluid_capacity,
-	current_fuel_level,
-	fuel_capacity
+    width,
+    height,
+    current_fill_level,
+    ingot_capacity,
+    fluid_capacity,
+    current_fuel_level,
+    fuel_capacity
 )
 	--[[
 	This function handles displaying all the pertinent
@@ -1071,11 +1096,11 @@ local function print_smeltery_details(
 	-- construct the string that represents the total
 	-- 	ingot capacity.
 	local ingot_capacity_string =
-		"Ingot Capacity: "
+	"Ingot Capacity: "
 		.. string.format(
 			"%.2f",
 			ingot_capacity - (
-				current_fill_level * ingot_capacity
+			current_fill_level * ingot_capacity
 			)
 		)
 		.. " free of "
@@ -1086,8 +1111,8 @@ local function print_smeltery_details(
 	-- 	on two lines.
 	if (
 		string.len(ingot_capacity_string)
-		< max_string_length
-	) then
+			< max_string_length
+		) then
 		print(ingot_capacity_string)
 	elseif (
 		string.len(
@@ -1095,20 +1120,20 @@ local function print_smeltery_details(
 			.. string.format(
 				"%.2f",
 				ingot_capacity - (
-					current_fill_level * ingot_capacity
+				current_fill_level * ingot_capacity
 				)
 			)
 			.. " free of "
 			.. ingot_capacity
 			.. " Total ingots.\n"
 		) < max_string_length
-	) then
+		) then
 		print(
 			"Ingot Capacity: \n\t"
 			.. string.format(
 				"%.2f",
 				ingot_capacity - (
-					current_fill_level * ingot_capacity
+				current_fill_level * ingot_capacity
 				)
 			)
 			.. " free of "
@@ -1121,7 +1146,7 @@ local function print_smeltery_details(
 			.. string.format(
 				"%.2f",
 				ingot_capacity - (
-					current_fill_level * ingot_capacity
+				current_fill_level * ingot_capacity
 				)
 			)
 			.. " free of "
@@ -1133,7 +1158,7 @@ local function print_smeltery_details(
 	-- construct the string that represents the total
 	-- 	fluid capacity.
 	local fluid_capacity_string =
-		"Fluid Capacity: "
+	"Fluid Capacity: "
 		.. fluid_capacity
 		.. "mb\n"
 
@@ -1141,8 +1166,8 @@ local function print_smeltery_details(
 	-- 	on two lines.
 	if (
 		string.len(fluid_capacity_string)
-		< max_string_length
-	) then
+			< max_string_length
+		) then
 		print(fluid_capacity_string)
 	else
 		print(
@@ -1156,19 +1181,19 @@ local function print_smeltery_details(
 	-- 	and total fuel capacity.
 	local fuel_level_string =
 	"Fuel Level: "
-	.. string.format(
-		"%.3f%%", current_fuel_level * 100
-	)
-	.. " of "
-	.. fuel_capacity
-	.. "mb"
+		.. string.format(
+			"%.3f%%", current_fuel_level * 100
+		)
+		.. " of "
+		.. fuel_capacity
+		.. "mb"
 
 	-- check it's length and if it's too long, print it
 	-- 	on two lines.
 	if (
 		string.len(fuel_level_string)
-		< max_string_length
-	) then
+			< max_string_length
+		) then
 		print(fuel_level_string)
 	else
 		print(
@@ -1190,6 +1215,7 @@ local function main()
 	]]
 
 	initialize_globals()
+	check_needed_peripherals()
 
 	-- set the scale of the text on the monitor.
 	Monitor.setTextScale(0.75)
