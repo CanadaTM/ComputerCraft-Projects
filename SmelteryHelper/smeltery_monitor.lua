@@ -780,6 +780,11 @@ local function fill_gui_tank(
 			local _, name_start = string.find(
 				value.name, "molten_"
 			)
+
+			if not name_start then
+				name_start = 0
+			end
+
 			local ore = string.sub(
 				value.name, name_start + 1
 			)
