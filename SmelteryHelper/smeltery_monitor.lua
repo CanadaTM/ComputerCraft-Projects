@@ -530,7 +530,7 @@ local function check_needed_peripherals()
 	end
 
 	if (
-		not Peripherals.tanks[1]
+		not Peripherals.tanks
 			or not Peripherals.duct
 		) then
 		error(

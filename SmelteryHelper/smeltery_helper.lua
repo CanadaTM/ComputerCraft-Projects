@@ -558,7 +558,7 @@ local function check_needed_peripherals()
 			or not Peripherals.drain
 			or not Peripherals.duct
 			or not Peripherals.table
-			or not Peripherals.storages[1]
+			or not Peripherals.storages
 		) then
 		error(
 			"I am missing a key peripheral!"
