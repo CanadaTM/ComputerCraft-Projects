@@ -7,57 +7,6 @@ local function defineGlobals()
     HOME_X, HOME_Y, HOME_Z = 2634, 82, -4459
 end
 
-local function gotoLocation(target_x, target_y, target_z)
-    current_x, current_y, current_z = gps.locate(5)
-
-    if not current_x then
-        error("couldn't get coords for some reason...")
-    end
-
-    if (
-        current_x == target_x
-            and current_y == target_y
-            and current_z == target_z
-        ) then return end
-
-    -- X component
-    if current_x < target_x then
-        faceDirection("east")
-        for i = current_x, target_x - 1, 1 do
-            turtle.forward()
-        end
-    elseif current_x > target_x then
-        faceDirection("west")
-        for i = current_x, target_x + 1, -1 do
-            turtle.forward()
-        end
-    end
-
-    -- Z component
-    if current_z < target_z then
-        faceDirection("south")
-        for i = current_z, target_z - 1, 1 do
-            turtle.forward()
-        end
-    elseif current_z > target_z then
-        faceDirection("north")
-        for i = current_z, target_z + 1, -1 do
-            turtle.forward()
-        end
-    end
-
-    -- Y component
-    if current_y < target_y then
-        for i = current_y, target_y - 1, 1 do
-            turtle.up()
-        end
-    elseif current_y > target_y then
-        for i = current_y, target_y + 1, -1 do
-            turtle.down()
-        end
-    end
-end
-
 local function faceDirection(direction)
 
     if direction == FACING then return end
@@ -121,6 +70,57 @@ local function faceDirection(direction)
             turtle.turnLeft()
             FACING = direction
             return
+        end
+    end
+end
+
+local function gotoLocation(target_x, target_y, target_z)
+    current_x, current_y, current_z = gps.locate(5)
+
+    if not current_x then
+        error("couldn't get coords for some reason...")
+    end
+
+    if (
+        current_x == target_x
+            and current_y == target_y
+            and current_z == target_z
+        ) then return end
+
+    -- X component
+    if current_x < target_x then
+        faceDirection("east")
+        for i = current_x, target_x - 1, 1 do
+            turtle.forward()
+        end
+    elseif current_x > target_x then
+        faceDirection("west")
+        for i = current_x, target_x + 1, -1 do
+            turtle.forward()
+        end
+    end
+
+    -- Z component
+    if current_z < target_z then
+        faceDirection("south")
+        for i = current_z, target_z - 1, 1 do
+            turtle.forward()
+        end
+    elseif current_z > target_z then
+        faceDirection("north")
+        for i = current_z, target_z + 1, -1 do
+            turtle.forward()
+        end
+    end
+
+    -- Y component
+    if current_y < target_y then
+        for i = current_y, target_y - 1, 1 do
+            turtle.up()
+        end
+    elseif current_y > target_y then
+        for i = current_y, target_y + 1, -1 do
+            turtle.down()
         end
     end
 end
