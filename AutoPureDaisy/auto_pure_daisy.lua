@@ -280,7 +280,7 @@ local function main()
     while true do
         -- Only do the thing when there's stuff in the box
         if searchBoxForItems() then
-            local inv_contents = INV.list()
+            local inv_contents = peripheral.call("bottom", "list")
             local important_items = {}
 
             for index, item in ipairs(inv_contents) do
