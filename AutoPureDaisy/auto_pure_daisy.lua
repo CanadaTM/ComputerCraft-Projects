@@ -176,7 +176,7 @@ local function gotoLocation(target_x, target_y, target_z)
 end
 
 local function doFullDaisy()
-
+    --! This assumes that the turtle is home
 end
 
 local function main()
@@ -188,21 +188,38 @@ local function main()
 
     gotoLocation(HOME_X, HOME_Y, HOME_Z)
 
+    INV = peripheral.wrap("bottom")
+    TRANSFER_INV = peripheral.wrap("right")
+    INV_NAME = peripheral.getName(INV)
+    TRANSFER_INV_NAME = peripheral.getName(TRANSFER_INV)
+
     -- Mainloop
     while true do
         -- Only do the thing when there's stuff in the box
         while searchBoxForItems() do
-            local inv_contents = peripheral.call("bottom", "list")
+            local inv_contents = INV.list()
             local important_items = {}
 
-            for _, item in ipairs(inv_contents) do
+            for index, item in ipairs(inv_contents) do
                 if (
                     string.match(item.name, "stone")
                         or string.match(item.name, "_log")
                     ) then
-                    table.insert(important_items, item)
+                    table.insert(important_items, index, item)
                 end
             end
+
+            -- Stone first
+            for index, item in ipairs(important_items) do
+                if string.match(item.name, "stone") then
+                    INV.pushItems(TRANSFER_INV, index)
+                end
+            end
+            turtle.turnRight()
+            for _ = 1, 16, 1 do
+                turtle.suck()
+            end
+            turtle.turnLeft()
         end
     end
 end
