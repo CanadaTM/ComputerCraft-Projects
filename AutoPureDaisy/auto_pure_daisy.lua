@@ -145,7 +145,7 @@ local function gotoLocation(target_x, target_y, target_z)
         end
     elseif current_x > target_x then
         faceDirection("west")
-        for i = current_x, target_x - 1, -1 do
+        for i = current_x, target_x + 1, -1 do
             turtle.forward()
         end
     end
@@ -158,7 +158,7 @@ local function gotoLocation(target_x, target_y, target_z)
         end
     elseif current_z > target_z then
         faceDirection("north")
-        for i = current_z, target_z - 1, -1 do
+        for i = current_z, target_z + 1, -1 do
             turtle.forward()
         end
     end
@@ -169,7 +169,7 @@ local function gotoLocation(target_x, target_y, target_z)
             turtle.up()
         end
     elseif current_y > target_y then
-        for i = current_y, target_y - 1, -1 do
+        for i = current_y, target_y + 1, -1 do
             turtle.down()
         end
     end
