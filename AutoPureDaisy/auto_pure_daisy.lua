@@ -215,11 +215,9 @@ local function main()
                     INV.pushItems(TRANSFER_INV_NAME, index)
                 end
             end
-            turtle.turnRight()
             for _ = 1, 16, 1 do
-                turtle.suck()
+                turtle.suckUp()
             end
-            turtle.turnLeft()
         end
     end
 end
