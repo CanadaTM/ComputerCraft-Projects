@@ -189,7 +189,7 @@ local function main()
     gotoLocation(HOME_X, HOME_Y, HOME_Z)
 
     INV = peripheral.wrap("bottom")
-    TRANSFER_INV = peripheral.wrap("right")
+    TRANSFER_INV = peripheral.wrap("top")
     INV_NAME = peripheral.getName(INV)
     TRANSFER_INV_NAME = peripheral.getName(TRANSFER_INV)
 
