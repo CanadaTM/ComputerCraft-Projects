@@ -212,7 +212,7 @@ local function main()
             -- Stone first
             for index, item in ipairs(important_items) do
                 if string.match(item.name, "stone") then
-                    INV.pushItems(TRANSFER_INV, index)
+                    INV.pushItems(TRANSFER_INV_NAME, index)
                 end
             end
             turtle.turnRight()
