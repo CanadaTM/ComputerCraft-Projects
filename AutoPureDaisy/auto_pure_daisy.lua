@@ -175,8 +175,95 @@ local function gotoLocation(target_x, target_y, target_z)
     end
 end
 
+local function prepareInventory(item_type)
+    gotoLocation(HOME_X - 1, HOME_Y, HOME_Z)
+    INV = peripheral.wrap("bottom")
+    TRANSFER_INV = peripheral.wrap("top")
+    INV_NAME = peripheral.getName(INV)
+    TRANSFER_INV_NAME = peripheral.getName(TRANSFER_INV)
+
+    for index, item in ipairs(important_items) do
+        if string.match(item.name, item_type) then
+            INV.pushItems(TRANSFER_INV_NAME, index)
+        end
+    end
+
+    for _ = 1, 16, 1 do
+        turtle.suckUp()
+    end
+
+    gotoLocation(HOME_X, HOME_Y, HOME_Z)
+    faceDirection("south")
+
+    local count = 0
+
+    for i = 1, 16, 1 do
+        count = count + turtle.getItemCount(i)
+    end
+end
+
 local function doFullDaisy()
-    --! This assumes that the turtle is home
+    --! This assumes that the turtle is above the bottom right corner of the pure daisy, facing toward the top right corner
+
+    -- Placing
+    turtle.placeDown()
+    turtle.forward()
+    for i = 1, 2, 1 do
+        turtle.placeDown()
+        turtle.forward()
+        turtle.placeDown()
+        turtle.turnLeft()
+        turtle.forward()
+    end
+    turtle.placeDown()
+    turtle.forward()
+    turtle.turnLeft()
+
+    sleep(60)
+
+    -- Collecting
+    turtle.digDown()
+    turtle.forward()
+    for i = 1, 2, 1 do
+        turtle.digDown()
+        turtle.forward()
+        turtle.digDown()
+        turtle.turnLeft()
+        turtle.forward()
+    end
+    turtle.digDown()
+    turtle.forward()
+    turtle.turnLeft()
+end
+
+local function doPartialDaisy(amount)
+    turtle.placeDown()
+    if amount >= 2 then
+        turtle.forward()
+        turtle.placeDown()
+    end
+    if amount >= 3 then
+        turtle.forward()
+        turtle.placeDown()
+    end
+    if amount >= 4 then
+        turtle.turnLeft()
+        turtle.forward()
+        turtle.placeDown()
+    end
+    if amount >= 5 then
+        turtle.forward()
+        turtle.placeDown()
+    end
+    if amount >= 6 then
+        turtle.turnLeft()
+        turtle.forward()
+        turtle.placeDown()
+    end
+    if amount == 7 then
+        turtle.forward()
+        turtle.placeDown()
+    end
 end
 
 local function main()
@@ -188,15 +275,10 @@ local function main()
 
     gotoLocation(HOME_X, HOME_Y, HOME_Z)
 
-    INV = peripheral.wrap("bottom")
-    TRANSFER_INV = peripheral.wrap("top")
-    INV_NAME = peripheral.getName(INV)
-    TRANSFER_INV_NAME = peripheral.getName(TRANSFER_INV)
-
     -- Mainloop
     while true do
         -- Only do the thing when there's stuff in the box
-        while searchBoxForItems() do
+        if searchBoxForItems() then
             local inv_contents = INV.list()
             local important_items = {}
 
@@ -210,14 +292,38 @@ local function main()
             end
 
             -- Stone first
-            for index, item in ipairs(important_items) do
-                if string.match(item.name, "stone") then
-                    INV.pushItems(TRANSFER_INV_NAME, index)
+            local stone_count = prepareInventory("stone")
+            local slots_used = math.ceil(stone_count / 64)
+            local full_ops = math.floor(stone_count / 8)
+            local final_op = stone_count % 8
+
+            -- get in position
+            --[[
+                o o o
+                o d o
+                o o o <- going there
+            ]]
+            turtle.up()
+            turtle.forward()
+
+            -- doing full daisy runs
+            if full_ops > 8 then
+                for i = 1, slots_used, 1 do
+                    turtle.select(i)
+                    for _ = 1, 8, 1 do
+                        doFullDaisy()
+                    end
+                end
+            else
+                for _ = 1, full_ops, 1 do
+                    doFullDaisy()
                 end
             end
-            for _ = 1, 16, 1 do
-                turtle.suckUp()
-            end
+
+            -- doing the final bit
+            doPartialDaisy(final_op)
+
+            gotoLocation(HOME_X, HOME_Y, HOME_Z)
         end
     end
 end
