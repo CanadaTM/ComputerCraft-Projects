@@ -5,6 +5,7 @@ local function defineGlobals()
         to allow the turtle to go back to it's home.
     ]]
     HOME_X, HOME_Y, HOME_Z = 2634, 82, -4459
+    CONVERSION_TIME = 26.5
 end
 
 local function faceDirection(direction)
@@ -16,11 +17,11 @@ local function faceDirection(direction)
             turtle.turnLeft()
             FACING = direction
             return
-        elseif direction == "west" then
+        elseif FACING == "west" then
             turtle.turnRight()
             FACING = direction
             return
-        elseif direction == "south" then
+        elseif FACING == "south" then
             turtle.turnLeft()
             turtle.turnLeft()
             FACING = direction
@@ -75,7 +76,7 @@ local function faceDirection(direction)
 end
 
 local function gotoLocation(target_x, target_y, target_z)
-    current_x, current_y, current_z = gps.locate(5)
+    local current_x, current_y, current_z = gps.locate(5)
 
     if not current_x then
         error("couldn't get coords for some reason...")
@@ -126,12 +127,15 @@ local function gotoLocation(target_x, target_y, target_z)
 end
 
 local function determineFacing()
-    turtle.up()
     local initial_x, _, initial_z = gps.locate()
     turtle.forward()
     local changed_x, _, changed_z = gps.locate()
-    turtle.back()
-    turtle.down()
+    if changed_x == initial_x and changed_z == initial_z then
+        turtle.back()
+        initial_x, _, initial_z = gps.locate()
+        turtle.forward()
+        changed_x, _, changed_z = gps.locate()
+    end
 
     --[[
         This will be used to keep track of the turtles
@@ -165,7 +169,8 @@ local function searchBoxForItems()
     gotoLocation(HOME_X - 1, HOME_Y, HOME_Z)
     local inv_contents = peripheral.call("bottom", "list")
 
-    for _, item in ipairs(inv_contents) do
+    for i, item in pairs(inv_contents) do
+        print(textutils.serialize(item))
         if (
             string.match(item.name, "stone")
                 or string.match(item.name, "_log")
@@ -176,20 +181,20 @@ local function searchBoxForItems()
     return false
 end
 
-local function prepareInventory(item_type)
+local function prepareInventory(item_type, item_list)
     gotoLocation(HOME_X - 1, HOME_Y, HOME_Z)
     INV = peripheral.wrap("bottom")
     TRANSFER_INV = peripheral.wrap("top")
     INV_NAME = peripheral.getName(INV)
     TRANSFER_INV_NAME = peripheral.getName(TRANSFER_INV)
 
-    for index, item in ipairs(important_items) do
+    for index, item in pairs(item_list) do
         if string.match(item.name, item_type) then
             INV.pushItems(TRANSFER_INV_NAME, index)
         end
     end
 
-    for _ = 1, 16, 1 do
+    for _ = 0, 16, 1 do
         turtle.suckUp()
     end
 
@@ -201,6 +206,8 @@ local function prepareInventory(item_type)
     for i = 1, 16, 1 do
         count = count + turtle.getItemCount(i)
     end
+
+    return count
 end
 
 local function doFullDaisy()
@@ -209,7 +216,7 @@ local function doFullDaisy()
     -- Placing
     turtle.placeDown()
     turtle.forward()
-    for i = 1, 2, 1 do
+    for i = 0, 2, 1 do
         turtle.placeDown()
         turtle.forward()
         turtle.placeDown()
@@ -220,12 +227,12 @@ local function doFullDaisy()
     turtle.forward()
     turtle.turnLeft()
 
-    sleep(60)
+    sleep(CONVERSION_TIME)
 
     -- Collecting
     turtle.digDown()
     turtle.forward()
-    for i = 1, 2, 1 do
+    for i = 0, 2, 1 do
         turtle.digDown()
         turtle.forward()
         turtle.digDown()
@@ -265,6 +272,84 @@ local function doPartialDaisy(amount)
         turtle.forward()
         turtle.placeDown()
     end
+    determineFacing()
+    gotoLocation(HOME_X, HOME_Y + 1, HOME_Z + 1)
+    faceDirection("south")
+    sleep(CONVERSION_TIME + 2)
+
+    turtle.digDown()
+    if amount >= 2 then
+        turtle.forward()
+        turtle.digDown()
+    end
+    if amount >= 3 then
+        turtle.forward()
+        turtle.digDown()
+    end
+    if amount >= 4 then
+        turtle.turnLeft()
+        turtle.forward()
+        turtle.digDown()
+    end
+    if amount >= 5 then
+        turtle.forward()
+        turtle.digDown()
+    end
+    if amount >= 6 then
+        turtle.turnLeft()
+        turtle.forward()
+        turtle.digDown()
+    end
+    if amount == 7 then
+        turtle.forward()
+        turtle.digDown()
+    end
+end
+
+local function convertBlocks(block_type, inventory)
+    local item_count = prepareInventory(block_type, inventory)
+    local slots_used = math.ceil(item_count / 64)
+    local full_ops = math.floor(item_count / 8)
+    local final_op = item_count % 8
+
+    -- get in position
+    --[[
+                o o o
+                o d o
+                o o o <- going there
+            ]]
+    turtle.up()
+    turtle.forward()
+
+    -- doing full daisy runs
+    if full_ops > 8 then
+        for i = 1, slots_used, 1 do
+            turtle.select(i)
+            for _ = 1, 8, 1 do
+                doFullDaisy()
+            end
+        end
+    else
+        for _ = 1, full_ops, 1 do
+            doFullDaisy()
+        end
+    end
+
+    -- doing the final bit
+    doPartialDaisy(final_op)
+
+    determineFacing()
+    gotoLocation(HOME_X, HOME_Y, HOME_Z)
+    faceDirection("south")
+end
+
+local function dumpInventory()
+    gotoLocation(HOME_X - 1, HOME_Y, HOME_Z)
+    faceDirection("north")
+    for i = 1, 16, 1 do
+        turtle.select(i)
+        turtle.drop()
+    end
 end
 
 local function main()
@@ -283,7 +368,7 @@ local function main()
             local inv_contents = peripheral.call("bottom", "list")
             local important_items = {}
 
-            for index, item in ipairs(inv_contents) do
+            for index, item in pairs(inv_contents) do
                 if (
                     string.match(item.name, "stone")
                         or string.match(item.name, "_log")
@@ -293,38 +378,16 @@ local function main()
             end
 
             -- Stone first
-            local stone_count = prepareInventory("stone")
-            local slots_used = math.ceil(stone_count / 64)
-            local full_ops = math.floor(stone_count / 8)
-            local final_op = stone_count % 8
+            convertBlocks("stone", important_items)
 
-            -- get in position
-            --[[
-                o o o
-                o d o
-                o o o <- going there
-            ]]
-            turtle.up()
-            turtle.forward()
+            -- Dump inventory
+            dumpInventory()
 
-            -- doing full daisy runs
-            if full_ops > 8 then
-                for i = 1, slots_used, 1 do
-                    turtle.select(i)
-                    for _ = 1, 8, 1 do
-                        doFullDaisy()
-                    end
-                end
-            else
-                for _ = 1, full_ops, 1 do
-                    doFullDaisy()
-                end
-            end
+            -- Logs second
+            convertBlocks("_log", important_items)
 
-            -- doing the final bit
-            doPartialDaisy(final_op)
-
-            gotoLocation(HOME_X, HOME_Y, HOME_Z)
+            -- Dump inventory
+            dumpInventory()
         end
     end
 end
