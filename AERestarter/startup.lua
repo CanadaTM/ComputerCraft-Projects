@@ -1,0 +1,1 @@
+shell.run("repo/AERestarter/ae-restarter.lua")
