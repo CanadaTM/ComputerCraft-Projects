@@ -236,3 +236,5 @@ local function main()
         sleep(15)
     end
 end
+
+main()
