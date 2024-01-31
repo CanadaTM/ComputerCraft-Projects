@@ -127,6 +127,16 @@ local function gotoLocation(target_x, target_y, target_z)
             turtle.down()
         end
     end
+
+    -- Check position
+    traveled_x, traveled_y, traveled_z = gps.locate(5)
+    if (
+        traveled_x ~= target_x or
+        traveled_y ~= target_y or
+        traveled_z ~= target_z
+    ) then
+        gotoLocation(target_x, target_y, target_z)
+    end
 end
 
 local function determineFacing()
@@ -203,7 +213,7 @@ local function main()
 
     if peripheral.wrap("right") then
         CURRENT_TOOL = "player-detector"
-    elseif
+    else
         CURRENT_TOOL = "pickaxe"
     end
 
